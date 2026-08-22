@@ -1,0 +1,658 @@
+name = "azerty"
+display_name = "French AZERTY"
+
+[keys."a"]
+row = 1
+col = 1.5
+hand = "left"
+finger = "pinky"
+
+[keys."A"]
+row = 1
+col = 1.5
+hand = "left"
+finger = "pinky"
+shift = true
+base = "a"
+
+[keys."z"]
+row = 1
+col = 2.5
+hand = "left"
+finger = "ring"
+
+[keys."Z"]
+row = 1
+col = 2.5
+hand = "left"
+finger = "ring"
+shift = true
+base = "z"
+
+[keys."e"]
+row = 1
+col = 3.5
+hand = "left"
+finger = "middle"
+
+[keys."E"]
+row = 1
+col = 3.5
+hand = "left"
+finger = "middle"
+shift = true
+base = "e"
+
+[keys."r"]
+row = 1
+col = 4.5
+hand = "left"
+finger = "index"
+
+[keys."R"]
+row = 1
+col = 4.5
+hand = "left"
+finger = "index"
+shift = true
+base = "r"
+
+[keys."t"]
+row = 1
+col = 5.5
+hand = "left"
+finger = "index"
+
+[keys."T"]
+row = 1
+col = 5.5
+hand = "left"
+finger = "index"
+shift = true
+base = "t"
+
+[keys."y"]
+row = 1
+col = 6.5
+hand = "right"
+finger = "index"
+
+[keys."Y"]
+row = 1
+col = 6.5
+hand = "right"
+finger = "index"
+shift = true
+base = "y"
+
+[keys."u"]
+row = 1
+col = 7.5
+hand = "right"
+finger = "index"
+
+[keys."U"]
+row = 1
+col = 7.5
+hand = "right"
+finger = "index"
+shift = true
+base = "u"
+
+[keys."i"]
+row = 1
+col = 8.5
+hand = "right"
+finger = "middle"
+
+[keys."I"]
+row = 1
+col = 8.5
+hand = "right"
+finger = "middle"
+shift = true
+base = "i"
+
+[keys."o"]
+row = 1
+col = 9.5
+hand = "right"
+finger = "ring"
+
+[keys."O"]
+row = 1
+col = 9.5
+hand = "right"
+finger = "ring"
+shift = true
+base = "o"
+
+[keys."p"]
+row = 1
+col = 10.5
+hand = "right"
+finger = "pinky"
+
+[keys."P"]
+row = 1
+col = 10.5
+hand = "right"
+finger = "pinky"
+shift = true
+base = "p"
+
+[keys."^"]
+row = 1
+col = 11.5
+hand = "right"
+finger = "pinky"
+
+[keys."¨"]
+row = 1
+col = 11.5
+hand = "right"
+finger = "pinky"
+shift = true
+base = "^"
+
+[keys."$"]
+row = 1
+col = 12.5
+hand = "right"
+finger = "pinky"
+
+[keys."£"]
+row = 1
+col = 12.5
+hand = "right"
+finger = "pinky"
+shift = true
+base = "$"
+
+[keys."\\"]
+row = 1
+col = 13.5
+hand = "right"
+finger = "pinky"
+
+[keys."μ"]
+row = 1
+col = 13.5
+hand = "right"
+finger = "pinky"
+shift = true
+base = "\\"
+
+[keys."q"]
+row = 2
+col = 1.75
+hand = "left"
+finger = "pinky"
+
+[keys."Q"]
+row = 2
+col = 1.75
+hand = "left"
+finger = "pinky"
+shift = true
+base = "q"
+
+[keys."s"]
+row = 2
+col = 2.75
+hand = "left"
+finger = "ring"
+
+[keys."S"]
+row = 2
+col = 2.75
+hand = "left"
+finger = "ring"
+shift = true
+base = "s"
+
+[keys."d"]
+row = 2
+col = 3.75
+hand = "left"
+finger = "middle"
+
+[keys."D"]
+row = 2
+col = 3.75
+hand = "left"
+finger = "middle"
+shift = true
+base = "d"
+
+[keys."f"]
+row = 2
+col = 4.75
+hand = "left"
+finger = "index"
+
+[keys."F"]
+row = 2
+col = 4.75
+hand = "left"
+finger = "index"
+shift = true
+base = "f"
+
+[keys."g"]
+row = 2
+col = 5.75
+hand = "left"
+finger = "index"
+
+[keys."G"]
+row = 2
+col = 5.75
+hand = "left"
+finger = "index"
+shift = true
+base = "g"
+
+[keys."h"]
+row = 2
+col = 6.75
+hand = "right"
+finger = "index"
+
+[keys."H"]
+row = 2
+col = 6.75
+hand = "right"
+finger = "index"
+shift = true
+base = "h"
+
+[keys."j"]
+row = 2
+col = 7.75
+hand = "right"
+finger = "index"
+
+[keys."J"]
+row = 2
+col = 7.75
+hand = "right"
+finger = "index"
+shift = true
+base = "j"
+
+[keys."k"]
+row = 2
+col = 8.75
+hand = "right"
+finger = "middle"
+
+[keys."K"]
+row = 2
+col = 8.75
+hand = "right"
+finger = "middle"
+shift = true
+base = "k"
+
+[keys."l"]
+row = 2
+col = 9.75
+hand = "right"
+finger = "ring"
+
+[keys."L"]
+row = 2
+col = 9.75
+hand = "right"
+finger = "ring"
+shift = true
+base = "l"
+
+[keys."m"]
+row = 2
+col = 10.75
+hand = "right"
+finger = "pinky"
+
+[keys."M"]
+row = 2
+col = 10.75
+hand = "right"
+finger = "pinky"
+shift = true
+base = "m"
+
+[keys."ù"]
+row = 2
+col = 11.75
+hand = "right"
+finger = "pinky"
+
+[keys."Ù"]
+row = 2
+col = 11.75
+hand = "right"
+finger = "pinky"
+shift = true
+base = "ù"
+
+[keys."w"]
+row = 3
+col = 2.25
+hand = "left"
+finger = "pinky"
+
+[keys."W"]
+row = 3
+col = 2.25
+hand = "left"
+finger = "pinky"
+shift = true
+base = "w"
+
+[keys."x"]
+row = 3
+col = 3.25
+hand = "left"
+finger = "ring"
+
+[keys."X"]
+row = 3
+col = 3.25
+hand = "left"
+finger = "ring"
+shift = true
+base = "x"
+
+[keys."c"]
+row = 3
+col = 4.25
+hand = "left"
+finger = "middle"
+
+[keys."C"]
+row = 3
+col = 4.25
+hand = "left"
+finger = "middle"
+shift = true
+base = "c"
+
+[keys."v"]
+row = 3
+col = 5.25
+hand = "left"
+finger = "index"
+
+[keys."V"]
+row = 3
+col = 5.25
+hand = "left"
+finger = "index"
+shift = true
+base = "v"
+
+[keys."b"]
+row = 3
+col = 6.25
+hand = "left"
+finger = "index"
+
+[keys."B"]
+row = 3
+col = 6.25
+hand = "left"
+finger = "index"
+shift = true
+base = "b"
+
+[keys."n"]
+row = 3
+col = 7.25
+hand = "right"
+finger = "index"
+
+[keys."N"]
+row = 3
+col = 7.25
+hand = "right"
+finger = "index"
+shift = true
+base = "n"
+
+[keys.","]
+row = 3
+col = 8.25
+hand = "right"
+finger = "index"
+
+[keys."?"]
+row = 3
+col = 8.25
+hand = "right"
+finger = "index"
+shift = true
+base = ","
+
+[keys.";"]
+row = 3
+col = 9.25
+hand = "right"
+finger = "middle"
+
+[keys."."]
+row = 3
+col = 9.25
+hand = "right"
+finger = "middle"
+shift = true
+base = ";"
+
+[keys.":"]
+row = 3
+col = 10.25
+hand = "right"
+finger = "ring"
+
+[keys."/"]
+row = 3
+col = 10.25
+hand = "right"
+finger = "ring"
+shift = true
+base = ":"
+
+[keys."!"]
+row = 3
+col = 11.25
+hand = "right"
+finger = "pinky"
+
+[keys."§"]
+row = 3
+col = 11.25
+hand = "right"
+finger = "pinky"
+shift = true
+base = "!"
+
+[keys." "]
+row = 4
+col = 6.0
+hand = "either"
+finger = "thumb"
+
+[keys."&"]
+row = 0
+col = 1.0
+hand = "left"
+finger = "pinky"
+
+[keys."1"]
+row = 0
+col = 1.0
+hand = "left"
+finger = "pinky"
+shift = true
+base = "&"
+
+[keys."é"]
+row = 0
+col = 2.0
+hand = "left"
+finger = "ring"
+
+[keys."2"]
+row = 0
+col = 2.0
+hand = "left"
+finger = "ring"
+shift = true
+base = "é"
+
+[keys."\""]
+row = 0
+col = 3.0
+hand = "left"
+finger = "middle"
+
+[keys."3"]
+row = 0
+col = 3.0
+hand = "left"
+finger = "middle"
+shift = true
+base = "\""
+
+[keys."'"]
+row = 0
+col = 4.0
+hand = "left"
+finger = "index"
+
+[keys."4"]
+row = 0
+col = 4.0
+hand = "left"
+finger = "index"
+shift = true
+base = "'"
+
+[keys."("]
+row = 0
+col = 5.0
+hand = "left"
+finger = "index"
+
+[keys."5"]
+row = 0
+col = 5.0
+hand = "left"
+finger = "index"
+shift = true
+base = "("
+
+[keys."-"]
+row = 0
+col = 6.0
+hand = "right"
+finger = "index"
+
+[keys."6"]
+row = 0
+col = 6.0
+hand = "right"
+finger = "index"
+shift = true
+base = "-"
+
+[keys."è"]
+row = 0
+col = 7.0
+hand = "right"
+finger = "index"
+
+[keys."7"]
+row = 0
+col = 7.0
+hand = "right"
+finger = "index"
+shift = true
+base = "è"
+
+[keys."_"]
+row = 0
+col = 8.0
+hand = "right"
+finger = "middle"
+
+[keys."8"]
+row = 0
+col = 8.0
+hand = "right"
+finger = "middle"
+shift = true
+base = "_"
+
+[keys."ç"]
+row = 0
+col = 9.0
+hand = "right"
+finger = "ring"
+
+[keys."9"]
+row = 0
+col = 9.0
+hand = "right"
+finger = "ring"
+shift = true
+base = "ç"
+
+[keys."à"]
+row = 0
+col = 10.0
+hand = "right"
+finger = "pinky"
+
+[keys."0"]
+row = 0
+col = 10.0
+hand = "right"
+finger = "pinky"
+shift = true
+base = "à"
+
+[keys."²"]
+row = 0
+col = 0.0
+hand = "left"
+finger = "pinky"
+
+[keys.")"]
+row = 0
+col = 11.0
+hand = "right"
+finger = "pinky"
+
+[keys."°"]
+row = 0
+col = 11.0
+hand = "right"
+finger = "pinky"
+shift = true
+base = ")"
+
+[keys."="]
+row = 0
+col = 12.0
+hand = "right"
+finger = "pinky"
+
+[keys."+"]
+row = 0
+col = 12.0
+hand = "right"
+finger = "pinky"
+shift = true
+base = "="

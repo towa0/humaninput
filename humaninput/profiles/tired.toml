@@ -1,0 +1,61 @@
+name = "tired"
+wpm_target = 55
+layout = "qwerty"
+
+[interval]
+distribution = "lognormal"
+mu_ms = 145
+sigma = 0.48
+
+[digraph_multipliers]
+same_key = 0.60
+alternating_hand = 0.85
+same_hand_different_finger = 1.0
+same_finger_different_key = 1.60
+to_punctuation = 1.30
+from_punctuation = 1.30
+to_digit = 2.0
+
+[hold]
+mu_ms = 92
+sigma = 0.32
+
+[rollover]
+probability = 0.25
+overlap_ms_mu = 18
+
+[burst]
+mean_length = 5.0
+pause_ms_mu = 260
+pause_ms_sigma = 0.55
+
+[cognitive_pauses]
+rare_word_probability = 0.35
+digit_probability = 0.50
+bracket_probability = 0.30
+sentence_start_probability = 0.40
+pause_ms_min = 450
+pause_ms_max = 1800
+
+[fatigue]
+enabled = true
+interval_drift_per_char = 0.0009
+error_rate_drift_per_char = 0.00004
+
+[errors]
+substitution_rate = 0.018
+transposition_rate = 0.008
+insertion_rate = 0.005
+omission_rate = 0.007
+detection_delay_chars = [1, 4]
+detection_delay_word_probability = 0.12
+correction_strategy = "word"
+uncorrected_rate = 0.08
+backspace_speed_multiplier = 0.65
+notice_pause_ms_min = 180
+notice_pause_ms_max = 550
+
+[mouse]
+fitts_a_ms = 55
+fitts_b_ms = 160
+tremor_amplitude_px = 0.8
