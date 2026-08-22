@@ -15,13 +15,15 @@ from humaninput.profile import Profile
 
 
 class Pointer:
-    def __init__(self, profile: Profile, seed: int | None = None):
+    def __init__(self, profile: Profile, seed: int | tuple[int, ...] | None = None):
         self.profile = profile
         self.seed = seed
 
     def _rng(self, salt: int = 0) -> np.random.Generator:
         if self.seed is None:
             return np.random.default_rng()
+        if isinstance(self.seed, tuple):
+            return np.random.default_rng((*self.seed, salt))
         return np.random.default_rng((self.seed, salt))
 
     def move(

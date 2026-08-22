@@ -56,7 +56,7 @@ class EventStream:
     """A reproducible, ordered collection of events plus generation metadata."""
 
     events: list[KeyEvent] | list[MouseEvent] = field(default_factory=list)
-    seed: int | None = None
+    seed: int | tuple[int, ...] | None = None
     profile_name: str | None = None
 
     def __iter__(self):
