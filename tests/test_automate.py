@@ -6,6 +6,9 @@ they were called in the right order with the right event streams.
 
 from __future__ import annotations
 
+import sys
+import types
+
 from humaninput import profile as profiles
 from humaninput.backends import pynput as pynput_backend
 from humaninput.events import KeyAction
@@ -41,9 +44,12 @@ def test_click_and_type_defaults_from_xy_to_current_mouse_position(monkeypatch):
     class _FakeController:
         position = (42.0, 7.0)
 
-    import pynput.mouse as _mouse_mod
-
-    monkeypatch.setattr(_mouse_mod, "Controller", _FakeController)
+    fake_mouse_mod = types.ModuleType("pynput.mouse")
+    fake_mouse_mod.Controller = _FakeController
+    fake_pynput_mod = types.ModuleType("pynput")
+    fake_pynput_mod.mouse = fake_mouse_mod
+    monkeypatch.setitem(sys.modules, "pynput", fake_pynput_mod)
+    monkeypatch.setitem(sys.modules, "pynput.mouse", fake_mouse_mod)
 
     captured = {}
     real_move = automate.Pointer.move
