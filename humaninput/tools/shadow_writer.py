@@ -46,7 +46,14 @@ def _type_cancelable(text: str, profile, seed, layout, cancel_event: threading.E
 
     stream = Typist(profile=profile, seed=seed, layout=layout).type(text, errors=errors)
     controller = Controller()
-    special = {"backspace": Key.backspace, "enter": Key.enter, "tab": Key.tab, "space": Key.space}
+    special = {
+        "backspace": Key.backspace,
+        "enter": Key.enter,
+        "tab": Key.tab,
+        "space": Key.space,
+        "arrowleft": Key.left,
+        "arrowright": Key.right,
+    }
 
     t0 = time.perf_counter()
     for e in stream.events:

@@ -58,6 +58,9 @@ class CognitivePauseConfig:
     sentence_start_probability: float = 0.45
     pause_ms_min: float = 400.0
     pause_ms_max: float = 2000.0
+    comma_probability: float = 0.20
+    comma_pause_ms_min: float = 120.0
+    comma_pause_ms_max: float = 450.0
 
 
 @dataclass
@@ -65,6 +68,22 @@ class FatigueConfig:
     enabled: bool = False
     interval_drift_per_char: float = 0.0004
     error_rate_drift_per_char: float = 0.000015
+
+
+@dataclass
+class PaceConfig:
+    """Slow mean-reverting drift on top of the per-keystroke interval
+    noise, so overall speed wanders (ups and downs over tens of
+    characters) instead of holding a flat average forever. An
+    Ornstein-Uhlenbeck process in log-space: `reversion_rate` pulls it
+    back toward baseline, `volatility` is the size of each random nudge.
+    """
+
+    enabled: bool = True
+    reversion_rate: float = 0.02
+    volatility: float = 0.045
+    min_multiplier: float = 0.8
+    max_multiplier: float = 1.3
 
 
 @dataclass
@@ -80,6 +99,10 @@ class ErrorConfig:
     backspace_speed_multiplier: float = 0.7
     notice_pause_ms_min: float = 150.0
     notice_pause_ms_max: float = 500.0
+    arrow_correction_probability: float = 0.35
+    arrow_correction_max_tail: int = 10
+    retype_error_rate_multiplier: float = 0.4
+    max_cascade_depth: int = 2
 
 
 @dataclass
@@ -116,6 +139,7 @@ class Profile:
     burst: BurstConfig = field(default_factory=BurstConfig)
     cognitive_pauses: CognitivePauseConfig = field(default_factory=CognitivePauseConfig)
     fatigue: FatigueConfig = field(default_factory=FatigueConfig)
+    pace: PaceConfig = field(default_factory=PaceConfig)
     errors: ErrorConfig = field(default_factory=ErrorConfig)
     mouse: MouseConfig = field(default_factory=MouseConfig)
 
@@ -128,6 +152,7 @@ _SECTION_TYPES = {
     "burst": BurstConfig,
     "cognitive_pauses": CognitivePauseConfig,
     "fatigue": FatigueConfig,
+    "pace": PaceConfig,
     "errors": ErrorConfig,
     "mouse": MouseConfig,
 }
@@ -211,10 +236,24 @@ def _validate(p: Profile) -> None:
         raise ValueError(f"unsupported interval distribution: {p.interval.distribution!r}")
     if p.errors.correction_strategy not in ("immediate", "word", "ignore"):
         raise ValueError(f"unsupported correction_strategy: {p.errors.correction_strategy!r}")
-    for rate_name in ("substitution_rate", "transposition_rate", "insertion_rate", "omission_rate", "uncorrected_rate"):
+    for rate_name in (
+        "substitution_rate",
+        "transposition_rate",
+        "insertion_rate",
+        "omission_rate",
+        "uncorrected_rate",
+        "arrow_correction_probability",
+        "retype_error_rate_multiplier",
+    ):
         v = getattr(p.errors, rate_name)
         if not 0.0 <= v <= 1.0:
             raise ValueError(f"errors.{rate_name} must be in [0, 1], got {v}")
+    if p.errors.arrow_correction_max_tail < 0:
+        raise ValueError("errors.arrow_correction_max_tail must be >= 0")
+    if p.errors.max_cascade_depth < 0:
+        raise ValueError("errors.max_cascade_depth must be >= 0")
     lo, hi = p.errors.detection_delay_chars
     if lo < 0 or hi < lo:
         raise ValueError("errors.detection_delay_chars must be [min, max] with 0 <= min <= max")
+    if p.pace.min_multiplier <= 0 or p.pace.max_multiplier < p.pace.min_multiplier:
+        raise ValueError("pace.min_multiplier must be > 0 and <= pace.max_multiplier")

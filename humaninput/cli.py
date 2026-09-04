@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import time
 
 from humaninput import fitting
 from humaninput import profile as profiles_mod
@@ -135,6 +136,37 @@ def cmd_write_on_hotkey(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_click_type(args: argparse.Namespace) -> int:
+    from humaninput.tools import automate
+
+    profile = profiles_mod.load(args.profile)
+    to_xy = _parse_xy(args.to)
+    from_xy = _parse_xy(args.from_) if args.from_ else None
+    if args.file:
+        with open(args.file, encoding="utf-8") as f:
+            text = f.read()
+    elif args.text is not None:
+        text = args.text
+    else:
+        text = sys.stdin.read()
+
+    print(f"[click-type] acting in {args.delay:.1f}s ... switch to the target window now", file=sys.stderr)
+    for remaining in range(int(args.delay), 0, -1):
+        print(f"  {remaining}...", file=sys.stderr)
+        time.sleep(1.0)
+
+    automate.click_and_type(
+        profile,
+        to_xy,
+        text,
+        from_xy=from_xy,
+        seed=args.seed,
+        layout=args.layout,
+        errors=not args.no_errors,
+    )
+    return 0
+
+
 def cmd_profiles(args: argparse.Namespace) -> int:
     print("profiles:")
     for name in profiles_mod.available_profiles():
@@ -176,6 +208,8 @@ def cmd_validate(args: argparse.Namespace) -> int:
         isolated.cognitive_pauses.digit_probability = 0.0
         isolated.cognitive_pauses.bracket_probability = 0.0
         isolated.cognitive_pauses.sentence_start_probability = 0.0
+        isolated.pace.enabled = False
+        isolated.fatigue.enabled = False
         s = Typist(profile=isolated, seed=99).type(pair * 1500, errors=False)
         downs = [e.t_ms for e in s.events if e.action == KeyAction.DOWN]
         return float(np.mean([b - a for a, b in zip(downs, downs[1:])]))
@@ -206,6 +240,8 @@ def cmd_validate(args: argparse.Namespace) -> int:
         isolated.cognitive_pauses.digit_probability = 0.0
         isolated.cognitive_pauses.bracket_probability = 0.0
         isolated.cognitive_pauses.sentence_start_probability = 0.0
+        isolated.pace.enabled = False
+        isolated.fatigue.enabled = False
 
         median = isolated.interval.mu_ms * isolated.digraph_multipliers.same_key
         s = Typist(profile=isolated, seed=7).type("l" * 3000, errors=False)
@@ -271,6 +307,18 @@ def build_parser() -> argparse.ArgumentParser:
     p_hotkey.add_argument("--delay", type=float, default=2.5, help="Seconds to wait after the hotkey before typing starts.")
     p_hotkey.add_argument("--no-errors", action="store_true")
     p_hotkey.set_defaults(func=cmd_write_on_hotkey)
+
+    p_click_type = sub.add_parser("click-type", help="Move the real mouse to a point, click it, then type text there.")
+    p_click_type.add_argument("--to", required=True, help="Target position to click, e.g. 500,300")
+    p_click_type.add_argument("--from", dest="from_", default=None, help="Start position (default: current cursor position)")
+    p_click_type.add_argument("text", nargs="?", help="Text to type. Reads -f/--file if omitted.")
+    p_click_type.add_argument("-f", "--file", help="Read text to type from a file.")
+    p_click_type.add_argument("--profile", default="touch_typist")
+    p_click_type.add_argument("--layout", default=None)
+    p_click_type.add_argument("--seed", type=int, default=None)
+    p_click_type.add_argument("--delay", type=float, default=3.0, help="Seconds to wait before acting (time to switch to the target window).")
+    p_click_type.add_argument("--no-errors", action="store_true")
+    p_click_type.set_defaults(func=cmd_click_type)
 
     p_profiles = sub.add_parser("profiles", help="List available profiles and layouts.")
     p_profiles.set_defaults(func=cmd_profiles)

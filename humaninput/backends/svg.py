@@ -10,27 +10,8 @@ from __future__ import annotations
 
 from html import escape
 
-from humaninput.events import EventStream, KeyAction
-
-
-def _replay_states(stream: EventStream) -> list[tuple[float, str]]:
-    """Collapse the event stream into (t_ms, buffer_text) whenever the
-    visible buffer changes, replaying keydowns (and backspace deletes) in
-    order.
-    """
-    states: list[tuple[float, str]] = [(0.0, "")]
-    buf = ""
-    for e in stream:
-        if e.action != KeyAction.DOWN:
-            continue
-        if e.key == "backspace":
-            buf = buf[:-1]
-        elif len(e.key) == 1:
-            buf += e.key
-        else:
-            continue
-        states.append((e.t_ms, buf))
-    return states
+from humaninput.events import EventStream
+from humaninput.replay import replay_buffer
 
 
 def render(
@@ -44,31 +25,31 @@ def render(
     cursor_color: str = "#4ade80",
     loop_pause_ms: float = 900.0,
 ) -> str:
-    states = _replay_states(stream)
+    states = replay_buffer(stream)
     char_width = char_width if char_width is not None else font_size * 0.6
-    max_len = max((len(s) for _, s in states), default=0)
+    max_len = max((len(s.text) for s in states), default=0)
     width = padding * 2 + max(max_len, 1) * char_width + char_width
     height = padding * 2 + font_size * 1.3
 
-    total_ms = states[-1][0] + loop_pause_ms if states else loop_pause_ms
+    total_ms = states[-1].t_ms + loop_pause_ms if states else loop_pause_ms
     total_s = total_ms / 1000.0
 
     y = padding + font_size
 
     text_layers = []
     cursor_sets = []
-    for i, (t_ms, text) in enumerate(states):
-        begin_s = t_ms / 1000.0
-        end_s = states[i + 1][0] / 1000.0 if i + 1 < len(states) else total_s
+    for i, state in enumerate(states):
+        begin_s = state.t_ms / 1000.0
+        end_s = states[i + 1].t_ms / 1000.0 if i + 1 < len(states) else total_s
         text_layers.append(
             f'<text x="{padding}" y="{y}" font-family="{font_family}" '
             f'font-size="{font_size}" fill="{text_color}" opacity="0">'
-            f"{escape(text)}"
+            f"{escape(state.text)}"
             f'<set attributeName="opacity" to="1" begin="loop.begin+{begin_s:.3f}s"/>'
             f'<set attributeName="opacity" to="0" begin="loop.begin+{end_s:.3f}s"/>'
             "</text>"
         )
-        cursor_x = padding + len(text) * char_width
+        cursor_x = padding + state.cursor * char_width
         cursor_sets.append(f'<set attributeName="x" to="{cursor_x:.1f}" begin="loop.begin+{begin_s:.3f}s"/>')
 
     bg_rect = "" if background == "transparent" else f'<rect width="100%" height="100%" fill="{background}"/>'

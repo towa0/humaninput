@@ -17,6 +17,9 @@ def make_isolated_profile(name: str = "touch_typist"):
     p.cognitive_pauses.digit_probability = 0.0
     p.cognitive_pauses.bracket_probability = 0.0
     p.cognitive_pauses.sentence_start_probability = 0.0
+    p.cognitive_pauses.comma_probability = 0.0
+    p.pace.enabled = False
+    p.fatigue.enabled = False
     return p
 
 

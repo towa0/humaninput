@@ -67,7 +67,14 @@ def play_keys(stream: EventStream) -> None:
 
     _warn_once()
     controller = Controller()
-    special = {"backspace": Key.backspace, "enter": Key.enter, "tab": Key.tab, "space": Key.space}
+    special = {
+        "backspace": Key.backspace,
+        "enter": Key.enter,
+        "tab": Key.tab,
+        "space": Key.space,
+        "arrowleft": Key.left,
+        "arrowright": Key.right,
+    }
 
     t0 = time.perf_counter()
     for e in stream:

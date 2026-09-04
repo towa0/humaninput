@@ -24,11 +24,15 @@ import numpy as np
 
 from humaninput.events import KeyAction, KeyEvent
 from humaninput.layout import DigraphClass, Layout
-from humaninput.profile import Profile
+from humaninput.profile import PaceConfig, Profile
 
 _COMMON_WORDS_PATH = pathlib.Path(__file__).parent / "common_words.txt"
 
 BACKSPACE = "\b"
+ARROW_LEFT = "\x11"
+ARROW_RIGHT = "\x12"
+_NAV_KEYS = (BACKSPACE, ARROW_LEFT, ARROW_RIGHT)
+_NAV_KEY_NAMES = {BACKSPACE: "backspace", ARROW_LEFT: "arrowleft", ARROW_RIGHT: "arrowright"}
 
 
 @functools.lru_cache(maxsize=1)
@@ -48,6 +52,7 @@ class CharAnnotation:
     digit_run_start: bool = False
     bracket_or_quote_open: bool = False
     sentence_start: bool = False
+    after_comma: bool = False
 
 
 def annotate_text(text: str, common_words: frozenset[str] | None = None) -> list[CharAnnotation]:
@@ -56,6 +61,7 @@ def annotate_text(text: str, common_words: frozenset[str] | None = None) -> list
     n = len(text)
     out: list[CharAnnotation] = [CharAnnotation() for _ in range(n)]
     sentence_pending = True
+    comma_pending = False
     i = 0
     while i < n:
         ch = text[i]
@@ -64,6 +70,10 @@ def annotate_text(text: str, common_words: frozenset[str] | None = None) -> list
             continue
         if ch in ".!?":
             sentence_pending = True
+            i += 1
+            continue
+        if ch in ",;":
+            comma_pending = True
             i += 1
             continue
         is_word_char = ch.isalpha()
@@ -82,8 +92,10 @@ def annotate_text(text: str, common_words: frozenset[str] | None = None) -> list
                 digit_run_start=is_digit_run,
                 bracket_or_quote_open=False,
                 sentence_start=sentence_pending,
+                after_comma=comma_pending,
             )
             sentence_pending = False
+            comma_pending = False
             i = j
             continue
         if ch in "([{\"'":
@@ -94,8 +106,10 @@ def annotate_text(text: str, common_words: frozenset[str] | None = None) -> list
                 digit_run_start=base.digit_run_start,
                 bracket_or_quote_open=True,
                 sentence_start=sentence_pending or base.sentence_start,
+                after_comma=comma_pending or base.after_comma,
             )
             sentence_pending = False
+            comma_pending = False
             i += 1
             continue
         sentence_pending = False
@@ -146,11 +160,15 @@ def generate_key_events(
     burst_remaining = _sample_burst_length(rng, profile.burst.mean_length)
     prev_key: str | None = None
     chars_typed = 0
+    pace_state = 0.0
 
     for idx, item in enumerate(items):
         if prev_key is not None:
             interval = _sample_interval(rng, profile, layout, prev_key, item)
             interval *= _fatigue_multiplier(profile, chars_typed)
+            if profile.pace.enabled:
+                pace_state, pace_mult = _step_pace(pace_state, profile.pace, rng)
+                interval *= pace_mult
             t += interval
 
             burst_remaining -= 1
@@ -170,7 +188,7 @@ def generate_key_events(
 
     for i, sc in enumerate(scheduled):
         hold_mu = profile.hold.mu_ms
-        if sc.item.key == BACKSPACE:
+        if sc.item.key in _NAV_KEYS:
             hold_mu *= profile.errors.backspace_speed_multiplier
         hold = _lognormal(rng, hold_mu, profile.hold.sigma)
         up_t = sc.down_t + hold
@@ -185,7 +203,7 @@ def generate_key_events(
 
     events: list[KeyEvent] = []
     for sc in scheduled:
-        key = "backspace" if sc.item.key == BACKSPACE else sc.item.key
+        key = _NAV_KEY_NAMES.get(sc.item.key, sc.item.key)
         events.append(KeyEvent(t_ms=sc.down_t, action=KeyAction.DOWN, key=key, is_correction=sc.item.is_correction, is_error=sc.item.is_error))
         events.append(KeyEvent(t_ms=sc.up_t, action=KeyAction.UP, key=key, is_correction=sc.item.is_correction, is_error=sc.item.is_error))
 
@@ -199,7 +217,7 @@ def _sample_burst_length(rng: np.random.Generator, mean_length: float) -> int:
 
 
 def _digraph_class(layout: Layout, prev_key: str, key: str) -> DigraphClass:
-    if key == BACKSPACE or prev_key == BACKSPACE:
+    if key in _NAV_KEYS or prev_key in _NAV_KEYS:
         return DigraphClass.SAME_HAND_DIFFERENT_FINGER
     return layout.classify_digraph(prev_key, key)
 
@@ -214,7 +232,7 @@ def _sample_interval(
     key = item.key
     dclass = _digraph_class(layout, prev_key, key)
     multiplier = getattr(profile.digraph_multipliers, dclass.value)
-    if key == BACKSPACE:
+    if key in _NAV_KEYS:
         multiplier *= profile.errors.backspace_speed_multiplier
     median = profile.interval.mu_ms * multiplier
     return _lognormal(rng, median, profile.interval.sigma)
@@ -231,12 +249,28 @@ def _cognitive_pause(rng: np.random.Generator, profile: Profile, ann: CharAnnota
         triggers.append(cfg.digit_probability)
     if ann.bracket_or_quote_open:
         triggers.append(cfg.bracket_probability)
-    if not triggers:
-        return 0.0
-    p = 1.0 - math.prod(1.0 - t for t in triggers)
-    if rng.random() >= p:
-        return 0.0
-    return float(rng.uniform(cfg.pause_ms_min, cfg.pause_ms_max))
+
+    pause = 0.0
+    if triggers:
+        p = 1.0 - math.prod(1.0 - t for t in triggers)
+        if rng.random() < p:
+            pause += float(rng.uniform(cfg.pause_ms_min, cfg.pause_ms_max))
+
+    if ann.after_comma and rng.random() < cfg.comma_probability:
+        pause += float(rng.uniform(cfg.comma_pause_ms_min, cfg.comma_pause_ms_max))
+
+    return pause
+
+
+def _step_pace(state: float, cfg: PaceConfig, rng: np.random.Generator) -> tuple[float, float]:
+    """One step of the pace-wander Ornstein-Uhlenbeck process: nudge
+    `state` (mean-reverting toward 0 in log-space), then convert to a
+    clamped multiplier. This is what makes overall speed drift up and
+    down over tens of characters instead of holding one flat average.
+    """
+    state += -cfg.reversion_rate * state + cfg.volatility * rng.standard_normal()
+    multiplier = min(max(math.exp(state), cfg.min_multiplier), cfg.max_multiplier)
+    return state, multiplier
 
 
 def _fatigue_multiplier(profile: Profile, chars_typed: int) -> float:

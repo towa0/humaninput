@@ -36,9 +36,19 @@ bracket_probability = 0.25
 sentence_start_probability = 0.35
 pause_ms_min = 400
 pause_ms_max = 1400
+comma_probability = 0.18
+comma_pause_ms_min = 100
+comma_pause_ms_max = 350
 
 [fatigue]
 enabled = false
+
+[pace]
+enabled = true
+reversion_rate = 0.02
+volatility = 0.045
+min_multiplier = 0.8
+max_multiplier = 1.3
 
 [errors]
 substitution_rate = 0.008
@@ -52,6 +62,10 @@ uncorrected_rate = 0.05
 backspace_speed_multiplier = 0.7
 notice_pause_ms_min = 150
 notice_pause_ms_max = 450
+arrow_correction_probability = 0.4
+arrow_correction_max_tail = 10
+retype_error_rate_multiplier = 0.4
+max_cascade_depth = 2
 
 [mouse]
 fitts_a_ms = 45

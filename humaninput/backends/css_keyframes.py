@@ -8,23 +8,8 @@ previous one).
 
 from __future__ import annotations
 
-from humaninput.events import EventStream, KeyAction
-
-
-def _replay_states(stream: EventStream) -> list[tuple[float, str]]:
-    states: list[tuple[float, str]] = [(0.0, "")]
-    buf = ""
-    for e in stream:
-        if e.action != KeyAction.DOWN:
-            continue
-        if e.key == "backspace":
-            buf = buf[:-1]
-        elif len(e.key) == 1:
-            buf += e.key
-        else:
-            continue
-        states.append((e.t_ms, buf))
-    return states
+from humaninput.events import EventStream
+from humaninput.replay import replay_buffer
 
 
 def _css_escape(text: str) -> str:
@@ -38,20 +23,24 @@ def render(
     loop_pause_ms: float = 900.0,
     cursor: bool = True,
 ) -> str:
-    states = _replay_states(stream)
-    total_ms = (states[-1][0] + loop_pause_ms) if states else loop_pause_ms
+    states = replay_buffer(stream)
+    total_ms = (states[-1].t_ms + loop_pause_ms) if states else loop_pause_ms
 
     keyframe_lines = []
     seen_pct: set[str] = set()
-    for t_ms, text in states:
-        pct = 0.0 if total_ms <= 0 else (t_ms / total_ms) * 100
+    prev_text: str | None = None
+    for state in states:
+        if state.text == prev_text:
+            continue
+        prev_text = state.text
+        pct = 0.0 if total_ms <= 0 else (state.t_ms / total_ms) * 100
         pct_str = f"{pct:.3f}"
         if pct_str in seen_pct:
             continue
         seen_pct.add(pct_str)
-        keyframe_lines.append(f'  {pct_str}% {{ content: "{_css_escape(text)}"; }}')
+        keyframe_lines.append(f'  {pct_str}% {{ content: "{_css_escape(state.text)}"; }}')
     if "100.000" not in seen_pct:
-        keyframe_lines.append(f'  100% {{ content: "{_css_escape(states[-1][1] if states else "")}"; }}')
+        keyframe_lines.append(f'  100% {{ content: "{_css_escape(states[-1].text if states else "")}"; }}')
 
     duration_s = total_ms / 1000.0
     iteration = "infinite" if loop else "1"
