@@ -16,6 +16,9 @@ env/
 .coverage
 .coverage.*
 htmlcov/
+coverage.xml
+
+site/
 
 *.log
 *.cast

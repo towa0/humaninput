@@ -4,6 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
 
+**[Full documentation →](https://towa0.github.io/humaninput/)** — the model in depth, complete profile TOML schema, every backend, CLI reference.
+
 A statistical model of human input timing — keystrokes and mouse movement — emitted as a timed event stream.
 
 **Use it for:** recording screencasts and demos where instant text insertion looks wrong, generating typing animations for docs and landing pages, and QA-testing UIs that behave differently under realistic input timing than under instantaneous programmatic input (debounce handling, autocomplete races, per-keystroke validation).

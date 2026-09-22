@@ -1,0 +1,51 @@
+site_name: humaninput
+site_description: A statistical model of human input timing — keystrokes, mouse, and touch — emitted as a timed event stream.
+site_url: https://towa0.github.io/humaninput/
+repo_url: https://github.com/towa0/humaninput
+repo_name: towa0/humaninput
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+    - content.action.edit
+
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - The model: model.md
+  - Profiles: profiles.md
+  - Layouts: layouts.md
+  - Backends: backends.md
+  - CLI reference: cli.md
+  - Tools: tools.md
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/towa0/humaninput

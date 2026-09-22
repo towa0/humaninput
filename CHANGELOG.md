@@ -26,6 +26,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   arrow-key correction renders correctly (mid-line edits, not just
   append/backspace-at-end).
 
+- Docs site (mkdocs-material, `pip install humaninput[docs]`): quickstart, the
+  timing model in depth, full profile TOML schema (every field, default, and
+  validation status), layouts, every backend, CLI reference, and a Tools page.
+  Deployed to GitHub Pages via Actions on push to `main` (paths-filtered to
+  `docs/**`/`mkdocs.yml`). README stays the concise landing page and links out
+  to it instead of duplicating content.
+- Touch model: `humaninput.touch.Touch` (`tap`, `drag`), direct-pointing
+  physics distinct from the mouse model (`profile.touch`: far fewer
+  in-flight corrections, no tremor overlay by default), reusing
+  `mouse/trajectory.py`'s minimum-jerk path synthesis. Emits `TouchEvent`
+  (`touchstart`/`touchmove`/`touchend`/`tap`) rather than `MouseEvent`,
+  since touch has no persistent cursor/hover state or button. Paired with
+  a new `[touch]` section on the `mobile_thumbs` profile.
+- `touch` backend (`humaninput/backends/touch.py`): dispatches
+  `TouchEvent` streams into a live Playwright `Page` via raw CDP
+  (`Input.dispatchTouchEvent`), same no-import-required pattern as the
+  `browser` backend.
+- `browser` backend (`humaninput/backends/browser.py`): drives a live
+  Playwright `Page` via raw CDP (`Input.dispatchKeyEvent`,
+  `Input.dispatchMouseEvent`) so this library's timing survives instead of
+  being replaced by Playwright's own `page.type()`/`page.click()` pacing.
+  No `playwright` import required to use `humaninput` (BYO `Page`).
+- CI: coverage reporting (`pytest --cov`, uploaded to Codecov when
+  `CODECOV_TOKEN` is configured; non-fatal otherwise) and a tag-triggered
+  (`v*`) PyPI publish job using Trusted Publishing (OIDC, no stored token).
+
 ### Fixed
 
 - `humaninput validate` on the `tired` profile: the isolated copies used for
