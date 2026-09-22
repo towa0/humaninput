@@ -51,11 +51,33 @@ class MouseEvent:
         return f"MouseEvent({self.t_ms:.1f}ms {self.type} ({self.x:.1f},{self.y:.1f}))"
 
 
+TouchEventType = Literal["touchstart", "touchmove", "touchend", "tap"]
+
+
+@dataclass(frozen=True, slots=True)
+class TouchEvent:
+    """A single touch sample. Unlike `MouseEvent`, there is no persistent
+    cursor/hover state or button: a touch interaction begins at contact
+    (`touchstart`) and ends at release (`touchend`), identified by
+    `touch_id` (always 0 — single-touch only, for now)."""
+
+    t_ms: float
+    type: TouchEventType
+    x: float
+    y: float
+    vx: float = 0.0
+    vy: float = 0.0
+    touch_id: int = 0
+
+    def __repr__(self) -> str:  # pragma: no cover - cosmetic
+        return f"TouchEvent({self.t_ms:.1f}ms {self.type} ({self.x:.1f},{self.y:.1f}))"
+
+
 @dataclass
 class EventStream:
     """A reproducible, ordered collection of events plus generation metadata."""
 
-    events: list[KeyEvent] | list[MouseEvent] = field(default_factory=list)
+    events: list[KeyEvent] | list[MouseEvent] | list[TouchEvent] = field(default_factory=list)
     seed: int | tuple[int, ...] | None = None
     profile_name: str | None = None
 

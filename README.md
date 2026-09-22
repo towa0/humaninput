@@ -123,6 +123,8 @@ Each backend is a consumer of the event stream, with lazily-imported optional de
 | `asciinema` | none | writes a `.cast` v2 file |
 | `matplotlib` | `matplotlib` | plots trajectories and interval histograms (validation/figures) |
 | `pynput` | `pynput` | drives the **real** OS keyboard/mouse — warns on first use; fail-safe aborts if the cursor hits a screen corner |
+| `browser` | none (BYO Playwright `Page`) | dispatches raw CDP `Input.dispatchKeyEvent`/`Input.dispatchMouseEvent` calls into a live Playwright page, preserving this library's timing instead of Playwright's own `page.type()`/`page.click()` pacing |
+| `touch` | none (BYO Playwright `Page`) | dispatches raw CDP `Input.dispatchTouchEvent` calls (tap/drag) from `humaninput.touch.Touch`, pairing with the `mobile_thumbs` profile's `[touch]` section |
 
 ## CLI
 
@@ -173,6 +175,8 @@ humaninput/
     fitts.py              # Fitts's law
     trajectory.py          # minimum-jerk sub-movements, tremor
     pointer.py             # public Pointer class
+  touch/
+    pointer.py             # public Touch class (direct pointing, reuses mouse/trajectory.py)
   fitting.py            # profile fitting from recorded CSV
   backends/
   tools/                # automate.py (click_and_type), shadow_writer.py (hotkey typer) — real I/O

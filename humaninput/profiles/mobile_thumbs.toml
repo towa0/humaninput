@@ -74,3 +74,11 @@ max_cascade_depth = 2
 fitts_a_ms = 70
 fitts_b_ms = 190
 tremor_amplitude_px = 1.2
+
+[touch]
+# small screen, small contact area: slower acquisition than a full-size
+# touchscreen tap and a bit of finger-pad wobble once contact is made.
+fitts_a_ms = 45
+fitts_b_ms = 150
+tremor_amplitude_px = 0.8
+tap_hold_ms_mu = 95

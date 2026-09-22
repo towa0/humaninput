@@ -128,6 +128,33 @@ class MouseConfig:
 
 
 @dataclass
+class TouchConfig:
+    """Direct-pointing (finger-on-glass) physics, distinct from `MouseConfig`.
+    A finger targets its destination directly rather than via an indirect
+    cursor, so movement is more ballistic-dominant with far fewer visible
+    in-flight corrections (`correction_base_count`/`correction_count_per_id_bit`
+    are much lower than the mouse defaults), and touchscreen digitizers
+    debounce/smooth raw contact samples, so `tremor_amplitude_px` defaults
+    to 0 (mouse sensor tremor has no real touch analog at this sample rate).
+    """
+
+    fitts_a_ms: float = 30.0
+    fitts_b_ms: float = 120.0
+    sample_rate_hz: float = 60.0
+    ballistic_fraction_min: float = 0.94
+    ballistic_fraction_max: float = 1.0
+    correction_base_count: float = 0.15
+    correction_count_per_id_bit: float = 0.08
+    overshoot_probability: float = 0.10
+    overshoot_fraction: float = 0.04
+    tremor_amplitude_px: float = 0.0
+    tremor_frequency_hz: float = 6.0
+    tap_hold_ms_mu: float = 80.0
+    tap_hold_ms_sigma: float = 0.30
+    drag_speed_multiplier: float = 0.8
+
+
+@dataclass
 class Profile:
     name: str = "default"
     wpm_target: float = 70.0
@@ -142,6 +169,7 @@ class Profile:
     pace: PaceConfig = field(default_factory=PaceConfig)
     errors: ErrorConfig = field(default_factory=ErrorConfig)
     mouse: MouseConfig = field(default_factory=MouseConfig)
+    touch: TouchConfig = field(default_factory=TouchConfig)
 
 
 _SECTION_TYPES = {
@@ -155,6 +183,7 @@ _SECTION_TYPES = {
     "pace": PaceConfig,
     "errors": ErrorConfig,
     "mouse": MouseConfig,
+    "touch": TouchConfig,
 }
 
 
