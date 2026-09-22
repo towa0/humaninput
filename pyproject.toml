@@ -29,6 +29,7 @@ dependencies = [
 
 [project.optional-dependencies]
 pynput = ["pynput>=1.7"]
+playwright = ["playwright>=1.40"]
 matplotlib = ["matplotlib>=3.7"]
 noise = ["noise>=1.2.2"]
 test = ["pytest>=7.4", "pytest-cov>=5.0", "scipy>=1.10"]
