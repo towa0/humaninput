@@ -137,6 +137,26 @@ humaninput profiles                                   # list available profiles/
 humaninput validate --profile touch_typist             # run stat checks, print report
 ```
 
+## Tools
+
+`humaninput/tools/` holds real-I/O automation built on the core model (which itself performs no I/O — see `humaninput/__init__.py`). Both require `pip install humaninput[pynput]` and drive the real OS keyboard/mouse.
+
+| tool | does |
+|---|---|
+| `tools/automate.py` | `click_and_type(profile, to_xy, text, ...)` — move the mouse to a point, click it, pause like a person re-orienting, then type into whatever got focused. Blocks for the whole sequence. |
+| `tools/shadow_writer.py` | `run(text_path, hotkey=...)` — a global hotkey listener: click into any text field anywhere on the system, press the hotkey, and it types that file's contents there with humanlike timing. Cancel/quit hotkeys and a fail-safe (move mouse to a screen corner) included. |
+
+```python
+from humaninput import profile as profiles
+from humaninput.tools.automate import click_and_type
+
+click_and_type(profiles.load("touch_typist"), to_xy=(500, 300), text="hello")
+```
+
+```bash
+python -c "from humaninput.tools import shadow_writer; shadow_writer.run('snippet.txt')"
+```
+
 ## Layout
 
 ```
@@ -155,6 +175,7 @@ humaninput/
     pointer.py             # public Pointer class
   fitting.py            # profile fitting from recorded CSV
   backends/
+  tools/                # automate.py (click_and_type), shadow_writer.py (hotkey typer) — real I/O
   cli.py
   profiles/
 ```
