@@ -31,6 +31,7 @@ Every generator takes a `seed`. Same seed + same profile + same input produces a
 ## Where to go next
 
 - **[Quickstart](quickstart.md)** — install, first typing/mouse/touch example, CLI basics.
+- **[Testing with Playwright](testing.md)** — `type_into`, seed sweeps, replaying a failing seed.
 - **[The model](model.md)** — the statistics behind typing, error injection, mouse movement, and touch.
 - **[Profiles](profiles.md)** — full TOML schema, every field with its default and valid range.
 - **[Layouts](layouts.md)** — the digraph-classification table format and shipped layouts.

@@ -22,13 +22,15 @@ from humaninput.events import EventStream, KeyAction
 if TYPE_CHECKING:
     from playwright.sync_api import CDPSession, Page
 
-_SPECIAL_KEYS: dict[str, tuple[str, str | None]] = {
-    "backspace": ("Backspace", None),
-    "enter": ("Enter", "\r"),
-    "tab": ("Tab", None),
-    "space": (" ", " "),
-    "arrowleft": ("ArrowLeft", None),
-    "arrowright": ("ArrowRight", None),
+# Chrome only runs editing commands (delete, caret moves) for key events that carry a virtual key code.
+_SPECIAL_KEYS: dict[str, tuple[str, str | None, str, int]] = {
+    "backspace": ("Backspace", None, "Backspace", 8),
+    "enter": ("Enter", "\r", "Enter", 13),
+    "\n": ("Enter", "\r", "Enter", 13),
+    "tab": ("Tab", None, "Tab", 9),
+    "space": (" ", " ", "Space", 32),
+    "arrowleft": ("ArrowLeft", None, "ArrowLeft", 37),
+    "arrowright": ("ArrowRight", None, "ArrowRight", 39),
 }
 
 _MOUSE_BUTTONS = {"left": "left", "right": "right", "middle": "middle"}
@@ -50,11 +52,18 @@ def play_keys(stream: EventStream, page: Page) -> None:
         if target_s > elapsed:
             time.sleep(target_s - elapsed)
 
-        cdp_key, text = _SPECIAL_KEYS.get(e.key, (e.key, e.key if len(e.key) == 1 else None))
+        special = _SPECIAL_KEYS.get(e.key)
+        if special is not None:
+            cdp_key, text, code, vk = special
+        else:
+            cdp_key, text, code, vk = e.key, (e.key if len(e.key) == 1 else None), None, None
         params = {
             "type": "keyDown" if e.action == KeyAction.DOWN else "keyUp",
             "key": cdp_key,
         }
+        if code is not None:
+            params["code"] = code
+            params["windowsVirtualKeyCode"] = vk
         if text is not None and e.action == KeyAction.DOWN:
             params["text"] = text
             params["unmodifiedText"] = text

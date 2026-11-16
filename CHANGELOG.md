@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `humaninput.playwright.type_into(locator, text, *, profile, seed, errors, layout)`:
+  click a Playwright locator and type into it through the `browser` backend.
+  Returns the played `EventStream`.
+- `humaninput.testing`: `seeds(n, start=0)` for `pytest.mark.parametrize`
+  (ids like `seed=13`) and `describe(stream)` for assertion messages.
+- `[playwright]` extra now includes pytest.
 - Arrow-key correction: a nearby typo can be fixed by navigating back to it
   (arrow-left, backspace/retype, arrow-right) instead of always backspacing
   through everything typed after it (`errors.arrow_correction_probability`,
@@ -61,6 +67,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `browser` backend: Backspace, arrow keys and Enter now send `code` and
+  `windowsVirtualKeyCode`. Without them Chrome ignored the keys, so typo
+  corrections never reached the page. A newline in the text now presses
+  Enter.
 - `humaninput validate` on the `tired` profile: the isolated copies used for
   its digraph-ordering and KS checks didn't disable `fatigue`, so its
   monotonic interval drift broke the log-normal fit.

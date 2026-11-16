@@ -119,3 +119,23 @@ def test_play_mouse_scroll_forwards_deltas(monkeypatch):
     assert session.calls == [
         ("Input.dispatchMouseEvent", {"type": "mouseWheel", "x": 5.0, "y": 5.0, "deltaX": 0.0, "deltaY": 3.0})
     ]
+
+
+def test_play_keys_sends_key_codes_for_editing_keys(monkeypatch):
+    _no_sleep(monkeypatch)
+    session = _FakeCDPSession()
+    page = _FakePage(session)
+    keys = ["backspace", "arrowleft", "arrowright", "\n"]
+    stream = EventStream(events=[KeyEvent(float(i), KeyAction.DOWN, k) for i, k in enumerate(keys)])
+
+    browser.play_keys(stream, page)
+
+    sent = [(p["key"], p["code"], p["windowsVirtualKeyCode"]) for _, p in session.calls]
+    assert sent == [
+        ("Backspace", "Backspace", 8),
+        ("ArrowLeft", "ArrowLeft", 37),
+        ("ArrowRight", "ArrowRight", 39),
+        ("Enter", "Enter", 13),
+    ]
+    assert session.calls[3][1]["text"] == "\r"
+    assert "text" not in session.calls[0][1]
