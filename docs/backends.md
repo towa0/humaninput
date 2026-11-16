@@ -86,9 +86,7 @@ pynput_backend.play_keys(stream)   # KeyEvent stream
 pynput_backend.play_mouse(stream)  # MouseEvent stream
 ```
 
-Drives the **real** OS keyboard/mouse. `pip install humaninput[pynput]`. Prints a warning on first use of either function per process. Implements a fail-safe modeled on pyautogui's: if the real cursor is found at a screen corner when a mouse event is about to be dispatched, playback aborts immediately (`RuntimeError`).
-
-This is what `humaninput/tools/automate.py` and `shadow_writer.py` are built on — see [Tools](tools.md).
+Replays a stream as real OS keyboard/mouse events, for example to drive a desktop app under test. `pip install humaninput[pynput]`. Prints a warning on first use of either function per process. Implements a fail-safe modeled on pyautogui's: if the real cursor is found at a screen corner when a mouse event is about to be dispatched, playback aborts immediately (`RuntimeError`).
 
 ## `browser`
 

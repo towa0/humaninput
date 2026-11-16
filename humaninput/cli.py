@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import sys
-import time
 
 from humaninput import fitting
 from humaninput import profile as profiles_mod
@@ -116,54 +115,6 @@ def cmd_fit(args: argparse.Namespace) -> int:
     fitted = fitting.fit_csv(args.csv, name=args.name, layout_name=args.layout)
     toml_text = profiles_mod.to_toml(fitted)
     _write_output(toml_text, args.output)
-    return 0
-
-
-def cmd_write_on_hotkey(args: argparse.Namespace) -> int:
-    from humaninput.tools import shadow_writer
-
-    shadow_writer.run(
-        args.file,
-        hotkey=args.hotkey,
-        cancel_hotkey=args.cancel_hotkey,
-        quit_hotkey=args.quit_hotkey,
-        profile_name=args.profile,
-        seed=args.seed,
-        layout_name=args.layout,
-        start_delay_s=args.delay,
-        errors=not args.no_errors,
-    )
-    return 0
-
-
-def cmd_click_type(args: argparse.Namespace) -> int:
-    from humaninput.tools import automate
-
-    profile = profiles_mod.load(args.profile)
-    to_xy = _parse_xy(args.to)
-    from_xy = _parse_xy(args.from_) if args.from_ else None
-    if args.file:
-        with open(args.file, encoding="utf-8") as f:
-            text = f.read()
-    elif args.text is not None:
-        text = args.text
-    else:
-        text = sys.stdin.read()
-
-    print(f"[click-type] acting in {args.delay:.1f}s ... switch to the target window now", file=sys.stderr)
-    for remaining in range(int(args.delay), 0, -1):
-        print(f"  {remaining}...", file=sys.stderr)
-        time.sleep(1.0)
-
-    automate.click_and_type(
-        profile,
-        to_xy,
-        text,
-        from_xy=from_xy,
-        seed=args.seed,
-        layout=args.layout,
-        errors=not args.no_errors,
-    )
     return 0
 
 
@@ -293,32 +244,6 @@ def build_parser() -> argparse.ArgumentParser:
     p_fit.add_argument("--name", default="fitted", help="Name for the fitted profile.")
     p_fit.add_argument("--layout", default="qwerty", help="Layout to classify digraphs against.")
     p_fit.set_defaults(func=cmd_fit)
-
-    p_hotkey = sub.add_parser(
-        "write-on-hotkey", help="Listen for a global hotkey and type a text file's contents wherever focus is."
-    )
-    p_hotkey.add_argument("file", help="Text file to type. Re-read on every trigger.")
-    p_hotkey.add_argument("--hotkey", default="<ctrl>+<alt>+h", help="Global hotkey that starts typing.")
-    p_hotkey.add_argument("--cancel-hotkey", default="<ctrl>+<alt>+x", help="Global hotkey that aborts in-progress typing.")
-    p_hotkey.add_argument("--quit-hotkey", default="<ctrl>+<alt>+q", help="Global hotkey that stops the listener.")
-    p_hotkey.add_argument("--profile", default="touch_typist")
-    p_hotkey.add_argument("--layout", default=None)
-    p_hotkey.add_argument("--seed", type=int, default=None)
-    p_hotkey.add_argument("--delay", type=float, default=2.5, help="Seconds to wait after the hotkey before typing starts.")
-    p_hotkey.add_argument("--no-errors", action="store_true")
-    p_hotkey.set_defaults(func=cmd_write_on_hotkey)
-
-    p_click_type = sub.add_parser("click-type", help="Move the real mouse to a point, click it, then type text there.")
-    p_click_type.add_argument("--to", required=True, help="Target position to click, e.g. 500,300")
-    p_click_type.add_argument("--from", dest="from_", default=None, help="Start position (default: current cursor position)")
-    p_click_type.add_argument("text", nargs="?", help="Text to type. Reads -f/--file if omitted.")
-    p_click_type.add_argument("-f", "--file", help="Read text to type from a file.")
-    p_click_type.add_argument("--profile", default="touch_typist")
-    p_click_type.add_argument("--layout", default=None)
-    p_click_type.add_argument("--seed", type=int, default=None)
-    p_click_type.add_argument("--delay", type=float, default=3.0, help="Seconds to wait before acting (time to switch to the target window).")
-    p_click_type.add_argument("--no-errors", action="store_true")
-    p_click_type.set_defaults(func=cmd_click_type)
 
     p_profiles = sub.add_parser("profiles", help="List available profiles and layouts.")
     p_profiles.set_defaults(func=cmd_profiles)

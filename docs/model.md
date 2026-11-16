@@ -29,7 +29,7 @@ Classification (`Layout.classify_digraph`, see [Layouts](layouts.md)) checks dig
 
 ### Key hold duration and rollover
 
-Key **hold** (down-to-up) duration is sampled independently of the inter-key interval, from `profile.hold` (log-normal, `mu_ms`/`sigma`). Because it's independent, fast profiles legitimately produce overlapping down/up pairs — **rollover**, one of the strongest tells between real and simulated typing. `profile.rollover.probability` is the chance a given keystroke's release is forced to wait until after the *next* key's press (plus `overlap_ms_mu` of overlap), rather than releasing on its own schedule.
+Key **hold** (down-to-up) duration is sampled independently of the inter-key interval, from `profile.hold` (log-normal, `mu_ms`/`sigma`). Because it's independent, fast profiles produce overlapping down/up pairs. Fast typists often press the next key before releasing the last one (**rollover**); the model produces this. `profile.rollover.probability` is the chance a given keystroke's release is forced to wait until after the *next* key's press (plus `overlap_ms_mu` of overlap), rather than releasing on its own schedule.
 
 ### Bursts and cognitive pauses
 

@@ -34,7 +34,6 @@ nav:
   - Layouts: layouts.md
   - Backends: backends.md
   - CLI reference: cli.md
-  - Tools: tools.md
 
 markdown_extensions:
   - admonition

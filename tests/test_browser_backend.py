@@ -1,7 +1,6 @@
 """browser backend dispatches raw CDP events into a Playwright Page. No
 real browser is needed: a fake Page/CDPSession pair records the
-`Input.dispatchKeyEvent`/`Input.dispatchMouseEvent` calls it receives,
-mirroring how test_automate.py mocks the pynput backend.
+`Input.dispatchKeyEvent`/`Input.dispatchMouseEvent` calls it receives.
 """
 
 from __future__ import annotations

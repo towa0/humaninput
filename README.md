@@ -63,7 +63,7 @@ humaninput validate --profile touch_typist   # same checks, no pytest required
 
 ## The model
 
-**Typing.** Inter-key intervals are drawn from a log-normal distribution, not a uniform or Gaussian one — human inter-key intervals are right-skewed, and a Gaussian never produces the long tail that makes generated typing look real. The interval's median is scaled by a **digraph-class multiplier** derived from a keyboard layout table (which hand, which finger, same key vs. same finger vs. different finger): `same_key` fastest, then `alternating_hand`, `same_hand_different_finger` (baseline), `same_finger_different_key` and `to_punctuation`/`from_punctuation` slower, `to_digit` slowest — digits break touch-typing muscle memory. Key **hold duration** (keyup timing) is sampled independently of the inter-key interval, so fast profiles legitimately produce overlapping down/up pairs (rollover) — one of the strongest tells between real and simulated typing. Typing comes in **bursts** (geometric run length) separated by micro-pauses, plus longer **cognitive pauses** before rare words, digit runs, brackets/quotes, sentence starts, and (shorter) after commas.
+**Typing.** Inter-key intervals are drawn from a log-normal distribution, not a uniform or Gaussian one — human inter-key intervals are right-skewed, and a Gaussian never produces their long tail of slow keystrokes. The interval's median is scaled by a **digraph-class multiplier** derived from a keyboard layout table (which hand, which finger, same key vs. same finger vs. different finger): `same_key` fastest, then `alternating_hand`, `same_hand_different_finger` (baseline), `same_finger_different_key` and `to_punctuation`/`from_punctuation` slower, `to_digit` slowest — digits break touch-typing muscle memory. Key **hold duration** (keyup timing) is sampled independently of the inter-key interval, so fast profiles produce overlapping down/up pairs. Fast typists often press the next key before releasing the last one (rollover); the model produces this. Typing comes in **bursts** (geometric run length) separated by micro-pauses, plus longer **cognitive pauses** before rare words, digit runs, brackets/quotes, sentence starts, and (shorter) after commas.
 
 On top of the per-keystroke noise, overall pace **wanders**: a mean-reverting random walk (Ornstein-Uhlenbeck in log-space, `[pace]` in a profile) multiplies every interval, so a 130-WPM profile doesn't hold a flat 130 — it drifts faster and slower over tens of characters and comes back, the way a real typing session speeds up and slows down rather than metronoming.
 
@@ -141,26 +141,6 @@ humaninput profiles                                   # list available profiles/
 humaninput validate --profile touch_typist             # run stat checks, print report
 ```
 
-## Tools
-
-`humaninput/tools/` holds real-I/O automation built on the core model (which itself performs no I/O — see `humaninput/__init__.py`). Both require `pip install humaninput[pynput]` and drive the real OS keyboard/mouse.
-
-| tool | does |
-|---|---|
-| `tools/automate.py` | `click_and_type(profile, to_xy, text, ...)` — move the mouse to a point, click it, pause like a person re-orienting, then type into whatever got focused. Blocks for the whole sequence. |
-| `tools/shadow_writer.py` | `run(text_path, hotkey=...)` — a global hotkey listener: click into any text field anywhere on the system, press the hotkey, and it types that file's contents there with humanlike timing. Cancel/quit hotkeys and a fail-safe (move mouse to a screen corner) included. |
-
-```python
-from humaninput import profile as profiles
-from humaninput.tools.automate import click_and_type
-
-click_and_type(profiles.load("touch_typist"), to_xy=(500, 300), text="hello")
-```
-
-```bash
-python -c "from humaninput.tools import shadow_writer; shadow_writer.run('snippet.txt')"
-```
-
 ## Layout
 
 ```
@@ -181,7 +161,6 @@ humaninput/
     pointer.py             # public Touch class (direct pointing, reuses mouse/trajectory.py)
   fitting.py            # profile fitting from recorded CSV
   backends/
-  tools/                # automate.py (click_and_type), shadow_writer.py (hotkey typer) — real I/O
   cli.py
   profiles/
 ```

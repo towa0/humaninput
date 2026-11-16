@@ -36,6 +36,5 @@ Every generator takes a `seed`. Same seed + same profile + same input produces a
 - **[Layouts](layouts.md)** — the digraph-classification table format and shipped layouts.
 - **[Backends](backends.md)** — every consumer of an `EventStream`, from `terminal` to `browser`/`touch` CDP dispatch.
 - **[CLI reference](cli.md)** — every subcommand and flag.
-- **[Tools](tools.md)** — `click_and_type` and the hotkey-triggered shadow writer.
 
 The [README](https://github.com/towa0/humaninput) stays the concise landing page; this site is where the depth lives.

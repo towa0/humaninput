@@ -5,7 +5,14 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.0] - Unreleased
+
+### Removed
+
+- `humaninput/tools/` (`automate.py` with `click_and_type`, and
+  `shadow_writer.py`), the `write-on-hotkey` and `click-type` CLI
+  subcommands, their tests, and the Tools docs page. Out of scope for a
+  UI-testing library.
 
 ### Added
 
@@ -28,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Docs site (mkdocs-material, `pip install humaninput[docs]`): quickstart, the
   timing model in depth, full profile TOML schema (every field, default, and
-  validation status), layouts, every backend, CLI reference, and a Tools page.
+  validation status), layouts, every backend, and a CLI reference.
   Deployed to GitHub Pages via Actions on push to `main` (paths-filtered to
   `docs/**`/`mkdocs.yml`). README stays the concise landing page and links out
   to it instead of duplicating content.

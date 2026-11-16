@@ -61,46 +61,6 @@ humaninput fit recorded.csv -o my_profile.toml
 | `--name` | `fitted` | name for the fitted profile |
 | `--layout` | `qwerty` | layout to classify digraphs against |
 
-## `write-on-hotkey`
-
-Listen for a global hotkey and type a text file's contents wherever OS focus is. Wraps `humaninput/tools/shadow_writer.py` — see [Tools](tools.md). Requires `pip install humaninput[pynput]`.
-
-```bash
-humaninput write-on-hotkey snippet.txt --hotkey "<ctrl>+<alt>+h"
-```
-
-| flag | default | meaning |
-|---|---|---|
-| `file` (positional) | required | text file to type; re-read on every trigger |
-| `--hotkey` | `<ctrl>+<alt>+h` | global hotkey that starts typing |
-| `--cancel-hotkey` | `<ctrl>+<alt>+x` | global hotkey that aborts in-progress typing |
-| `--quit-hotkey` | `<ctrl>+<alt>+q` | global hotkey that stops the listener |
-| `--profile` | `touch_typist` | profile name or path |
-| `--layout` | none | layout override |
-| `--seed` | none | random seed |
-| `--delay` | `2.5` | seconds to wait after the hotkey before typing starts |
-| `--no-errors` | off | disable typo/correction simulation |
-
-## `click-type`
-
-Move the real mouse to a point, click it, then type text there. Wraps `humaninput/tools/automate.py`'s `click_and_type` — see [Tools](tools.md). Requires `pip install humaninput[pynput]`.
-
-```bash
-humaninput click-type --to 500,300 "hello"
-```
-
-| flag | default | meaning |
-|---|---|---|
-| `--to` | required | target position to click, e.g. `500,300` |
-| `--from` | current cursor position | start position |
-| `text` (positional) | — | text to type; reads `-f`/`--file` if omitted |
-| `-f`, `--file` | — | read text to type from a file |
-| `--profile` | `touch_typist` | profile name or path |
-| `--layout` | none | layout override |
-| `--seed` | none | random seed |
-| `--delay` | `3.0` | seconds to wait before acting, to switch to the target window |
-| `--no-errors` | off | disable typo/correction simulation |
-
 ## `profiles`
 
 List available profiles and layouts. No flags.
