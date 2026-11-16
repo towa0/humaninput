@@ -22,10 +22,18 @@ APP = (pathlib.Path(__file__).parent / "app.html").resolve().as_uri()
 TEXT = "Amsterdam"
 QUIET_MS = 1500
 
-BUGGY_REASON = (
-    "app.html renders whichever response arrives last; some seeds pause where a "
-    "slow request gets sent. Run with --runxfail to see them fail."
-)
+# Virtual-time replay is exact, so the failing seeds are known and pinned.
+FAILING_SEEDS = {1, 7, 8, 10, 12}
+HUMAN_SEEDS = [
+    pytest.param(
+        *p.values,
+        id=p.id,
+        marks=[pytest.mark.xfail(strict=True, reason="known stale-response race at this seed")]
+        if p.values[0] in FAILING_SEEDS
+        else [],
+    )
+    for p in seeds(20)
+]
 
 
 @pytest.fixture(scope="module")
@@ -98,8 +106,7 @@ def test_fixed_delay_slow(buggy):
     assert_results_match_input(buggy)
 
 
-@pytest.mark.xfail(strict=False, reason=BUGGY_REASON)
-@pytest.mark.parametrize("seed", seeds(20))
+@pytest.mark.parametrize("seed", HUMAN_SEEDS)
 def test_human(buggy, seed):
     stream = type_into(buggy.locator("#city"), TEXT, profile="hunt_and_peck", seed=seed, virtual_time=True)
     assert_results_match_input(buggy, describe(stream))

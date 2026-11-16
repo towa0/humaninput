@@ -42,8 +42,8 @@ def _streams() -> dict:
 @pytest.mark.browser
 @pytest.mark.parametrize(
     ("seed", "fixed", "passes"),
-    [(7, False, False), (0, False, True), (7, True, True)],
-    ids=["seed=7", "seed=0", "seed=7-fixed"],
+    [(7, False, False), (1, False, False), (8, False, False), (0, False, True), (7, True, True)],
+    ids=["seed=7", "seed=1", "seed=8", "seed=0", "seed=7-fixed"],
 )
 def test_demo_outcome(seed, fixed, passes):
     sync_api = pytest.importorskip("playwright.sync_api")

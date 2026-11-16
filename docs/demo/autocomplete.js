@@ -3,8 +3,10 @@
 (function () {
   "use strict";
 
+  // Amsterdijk, Amsterdorp and Amsterdrecht are made up, so "Amsterd" and "Amsterdam" give different results.
   var CITIES = [
-    "Amstelveen", "Amsterdam", "Antwerp", "Arnhem", "Athens", "Barcelona",
+    "Amstelveen", "Amsterdam", "Amsterdijk", "Amsterdorp", "Amsterdrecht",
+    "Antwerp", "Arnhem", "Athens", "Barcelona",
     "Berlin", "Bern", "Brussels", "Budapest", "Copenhagen", "Dublin",
     "Edinburgh", "Helsinki", "Lisbon", "London", "Madrid", "Oslo",
     "Paris", "Prague", "Rome", "Rotterdam", "Stockholm", "Vienna", "Warsaw",

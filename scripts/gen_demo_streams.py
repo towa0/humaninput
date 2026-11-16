@@ -23,7 +23,8 @@ OUT = ROOT / "docs" / "demo" / "streams.js"
 TEXT = "Amsterdam"
 PROFILE = "hunt_and_peck"
 # Seeds 1, 7, 8, 10 and 12 fail in examples/autocomplete-race; seed 0 passes.
-SEEDS = [7, 1, 8, 10, 12, 0]
+# 10 and 12 lose the race by under 60 ms, too close for real-time browser timers.
+SEEDS = [7, 1, 8, 0]
 
 
 def build() -> str:

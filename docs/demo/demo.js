@@ -7,7 +7,7 @@
   var AC = window.Autocomplete;
   var QUIET_MS = 1500;
   var SVG_NS = "http://www.w3.org/2000/svg";
-  var FAILING = [1, 7, 8, 10, 12];
+  // The picker offers seeds 7, 1, 8 and 0. Seeds 10 and 12 also fail in the tests, but by under 60 ms: too close for real-time timers here.
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   var el = {
@@ -42,8 +42,7 @@
     el.seed.appendChild(opt);
   });
   el.seedNote.textContent =
-    "Seeds " + FAILING.slice(0, -1).join(", ") + " and " + FAILING[FAILING.length - 1] +
-    " fail in the example's test suite; seed 0 passes. Each is a stream from the Python engine.";
+    "Seeds 7, 1 and 8 fail in the example's test suite; seed 0 passes. Each is a stream from the Python engine.";
 
   // ---- keyboard ----
   var ROWS = [
@@ -146,7 +145,7 @@
   }
 
   // ---- timeline ----
-  var TL = { w: 1000, left: 8, right: 8, top: 26, lane: 22 };
+  var TL = { w: 1000, left: 8, right: 200, top: 26, lane: 22 };
 
   function Timeline(totalMs) {
     this.total = totalMs;
@@ -194,10 +193,6 @@
     var rect = svg("rect", { class: "bar", x: x0, y: y, width: Math.max(2, x1 - x0), height: 14, rx: 2 }, this.reqs);
     var label = svg("text", { class: "label", x: x1 + 5, y: y + 11 }, this.reqs);
     label.textContent = '"' + ev.query + '" ' + ev.latency + " ms";
-    if (x1 > TL.w - 190) {
-      label.setAttribute("x", x0 - 5);
-      label.setAttribute("text-anchor", "end");
-    }
     this.bars[ev.id] = { rect: rect, label: label };
   };
   Timeline.prototype.mark = function (id, cls) {
@@ -218,6 +213,7 @@
     input.value = "";
     root.querySelector("[data-role=query]").textContent = "";
     root.querySelector("[data-role=list]").replaceChildren();
+    root.querySelector(".results").classList.remove("mismatch");
     return input;
   }
 
@@ -308,6 +304,7 @@
   function check(root, verdictNode, passText) {
     var typed = root.querySelector("[data-role=input]").value;
     var shown = root.querySelector("[data-role=query]").textContent;
+    root.querySelector(".results").classList.toggle("mismatch", shown !== typed);
     if (shown === typed) setVerdict(verdictNode, "ok", "✓ " + passText + ": shows results for " + typed);
     else setVerdict(verdictNode, "bad", "✗ Shows results for " + shown + ", but you typed " + typed);
   }

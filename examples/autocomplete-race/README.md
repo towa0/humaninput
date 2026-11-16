@@ -6,6 +6,7 @@ A city search box with a bug planted on purpose. The bug class is common in real
 
 `app.html` is one static page with no build step and no network requests. The component lives in `autocomplete.js`. The docs demo uses a byte-identical copy of it, and a test checks that the two copies match.
 
+- The place list includes three made-up places (Amsterdijk, Amsterdorp, Amsterdrecht). That way results for "Amsterd" look clearly different from results for "Amsterdam".
 - Input is debounced by 300 ms. A search is sent only after 300 ms without typing.
 - `fakeSearch(query)` simulates a server. Its latency is a fixed function of the query string (a hash mapped to 100–1100 ms). Random latency would make failures impossible to replay. Real networks do vary, which is one more reason these bugs reach production.
 - **The bug:** the results area shows whichever response arrives last. Nothing checks whether it is still the latest query.
@@ -24,8 +25,10 @@ Each test types into the box, lets 1.5 s pass, then checks that "Results for:" m
 | `test_fill` | buggy | `locator.fill("Amsterdam")` | passes: one input event, one request |
 | `test_fixed_delay` | buggy | one key every 100 ms | passes: no pause reaches 300 ms, so only one request goes out |
 | `test_fixed_delay_slow` | buggy | one key every 400 ms | **fails** (marked xfail, strict) |
-| `test_human[seed=0..19]` | buggy | `type_into(..., profile="hunt_and_peck", seed=seed)` | **5 of 20 fail**: seeds 1, 7, 8, 10, 12 (marked xfail) |
+| `test_human[seed=0..19]` | buggy | `type_into(..., profile="hunt_and_peck", seed=seed)` | **5 of 20 fail**: seeds 1, 7, 8, 10, 12 (marked xfail, strict); the other 15 must pass |
 | `test_human_fixed[seed=0..19]` | `?fixed=1` | same 20 seeds | all pass |
+
+The failing set is pinned by the tests because replay in virtual time is exact.
 
 A fixed delay can catch this if you guess the right value. I measured it in the browser. Delays from 300 to 432 ms fail. Delays of 290 ms and below pass, and so do 433 ms and above. The window follows from the latencies: a 300 ms gap lets "Amsterd" go out, and two more gaps must add up to less than 866 ms. With another query or other latencies, the window would be somewhere else. Seeds spread the timing across many runs, so you don't have to guess, and a failing seed replays exactly.
 
@@ -52,14 +55,14 @@ The fixed-delay tests press one key at a time and advance the clock between pres
 From the repo root, with `pip install -e ".[playwright]"` and `playwright install chromium`:
 
 ```bash
-pytest examples/autocomplete-race               # buggy-app failures show as xfail
+pytest examples/autocomplete-race               # the 5 known failures show as xfail
 pytest examples/autocomplete-race --runxfail    # show them as real failures
 pytest "examples/autocomplete-race/test_autocomplete.py::test_human[seed=7]" --runxfail
 ```
 
 The last command replays one failing seed: same keystrokes, same timing, same stale result.
 
-The buggy-app tests are marked `xfail` so the repo's own runs stay green. Without Playwright or Chromium, the tests are skipped. CI runs this folder in a separate `browser` job, along with the other tests marked `browser`.
+The 5 failing seeds and the 400 ms test are marked `xfail(strict=True)`, so the repo's own runs stay green. If one of them starts passing, or another seed starts failing, the run goes red. Without Playwright or Chromium, the tests are skipped. CI runs this folder in a separate `browser` job, along with the other tests marked `browser`.
 
 The whole folder (43 tests) takes about 17 s on my machine. Before virtual time it took 4 min 40 s, because every test typed in real time. If you have pytest-xdist, `pytest -n auto examples/autocomplete-race` runs the tests in parallel. This repo doesn't depend on xdist.
 

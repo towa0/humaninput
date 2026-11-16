@@ -134,6 +134,8 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 .results { margin-top: 10px; min-height: 96px; }
 .results p { margin: 0 0 4px; }
 .results [data-role=query] { font-weight: 600; }
+.results.mismatch p { color: var(--bad); }
+.results.mismatch p::after { content: " (not what you typed)"; font-weight: 400; }
 .results ul { margin: 0; padding-left: 20px; }
 .results .empty { list-style: none; color: var(--muted); }
 
@@ -182,6 +184,7 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 .timeline { width: 100%; min-width: 760px; height: auto; display: block; }
 .timeline .axis line { stroke: var(--border); }
 .timeline .axis text, .timeline .label { fill: var(--muted); font: 14px system-ui, sans-serif; }
+.timeline .label { paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
 .timeline .label.strong { fill: var(--text); }
 .timeline .tick { stroke: var(--text); stroke-width: 2; }
 .timeline .tick.err { stroke: var(--bad); }
