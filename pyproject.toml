@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "humaninput"
-version = "0.1.0"
-description = "Statistical model of human input timing (keystrokes, mouse) emitted as a timed event stream"
+version = "0.2.0"
+description = "Find frontend timing bugs by typing like people do, then replay the exact failure."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }

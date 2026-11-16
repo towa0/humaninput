@@ -8,7 +8,7 @@ from humaninput.mouse.pointer import Pointer
 from humaninput.profile import Profile
 from humaninput.typing.typist import Typist
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "Typist",
