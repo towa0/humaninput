@@ -31,7 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Docs demo (`docs/demo/`, published at `/demo/`): `fill()` and a
   humaninput seed typing into the same buggy autocomplete, with a key
   view and a request timeline. Streams come from
-  `scripts/gen_demo_streams.py`.
+  `scripts/gen_demo_streams.py`. `scripts/record_demo.py` records it to
+  the README GIF.
 - `tests/test_browser_real.py` (`browser` marker): Backspace, arrows and
   Enter in real Chromium. Skipped when Playwright or Chromium is missing.
 - Arrow-key correction: a nearby typo can be fixed by navigating back to it

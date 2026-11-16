@@ -13,7 +13,7 @@ A statistical model of human input timing — keystrokes and mouse movement — 
 **[Try the demo →](https://towa0.github.io/humaninput/demo/)** The same buggy autocomplete, typed into by `fill()` and by a humaninput seed.
 
 <p align="center">
-  <a href="https://towa0.github.io/humaninput/demo/"><img src="docs/demo.png" alt="Split screen. Left, an automated test fills 'Amsterdam' and passes. Right, humaninput seed 7 types 'Amsterdam' with a typo and correction; the page shows results for 'Amsterd', and the timeline shows the slow 'Amsterd' request finishing after the 'Amsterdam' one." width="720"></a>
+  <a href="https://towa0.github.io/humaninput/demo/"><img src="docs/demo.gif" alt="Recording of the demo. Left, an automated test fills 'Amsterdam' and passes. Right, humaninput seed 7 types 'Amsterdam' with a typo and a correction; the page ends up showing results for 'Amsterd', and the timeline shows the slow 'Amsterd' request finishing after the 'Amsterdam' one. Then the fix is switched on, the same seed is replayed, and it passes." width="720"></a>
 </p>
 
 ## Core design decision
