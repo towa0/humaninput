@@ -16,6 +16,8 @@ from humaninput.testing import describe, seeds
 
 sync_api = pytest.importorskip("playwright.sync_api")
 
+pytestmark = pytest.mark.browser
+
 APP = (pathlib.Path(__file__).parent / "app.html").resolve().as_uri()
 TEXT = "Amsterdam"
 QUIET_MS = 1500

@@ -59,7 +59,7 @@ pytest "examples/autocomplete-race/test_autocomplete.py::test_human[seed=7]" --r
 
 The last command replays one failing seed: same keystrokes, same timing, same stale result.
 
-The buggy-app tests are marked `xfail` so the repo's own runs stay green. Without Playwright or Chromium, the tests are skipped.
+The buggy-app tests are marked `xfail` so the repo's own runs stay green. Without Playwright or Chromium, the tests are skipped. CI runs this folder in a separate `browser` job, along with the other tests marked `browser`.
 
 The whole folder (43 tests) takes about 17 s on my machine. Before virtual time it took 4 min 40 s, because every test typed in real time. If you have pytest-xdist, `pytest -n auto examples/autocomplete-race` runs the tests in parallel. This repo doesn't depend on xdist.
 
