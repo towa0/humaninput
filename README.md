@@ -10,11 +10,11 @@ A statistical model of human input timing — keystrokes and mouse movement — 
 
 **Use it for:** recording screencasts and demos where instant text insertion looks wrong, generating typing animations for docs and landing pages, and QA-testing UIs that behave differently under realistic input timing than under instantaneous programmatic input (debounce handling, autocomplete races, per-keystroke validation).
 
-<p align="center">
-  <img src="docs/lead.svg" alt="hunt_and_peck profile typing 'realy fast typing looks fake', with a mid-word typo (typk / typkn) caught and corrected back to 'typing'" width="420">
-</p>
+**[Try the demo →](https://towa0.github.io/humaninput/demo/)** The same buggy autocomplete, typed into by `fill()` and by a humaninput seed.
 
-<p align="center"><em>The <code>hunt_and_peck</code> profile typing a sentence — a real generated event stream, rendered by the SVG backend. No hand-authored timing, no keyframe editing.</em></p>
+<p align="center">
+  <a href="https://towa0.github.io/humaninput/demo/"><img src="docs/demo.png" alt="Split screen. Left, an automated test fills 'Amsterdam' and passes. Right, humaninput seed 7 types 'Amsterdam' with a typo and correction; the page shows results for 'Amsterd', and the timeline shows the slow 'Amsterd' request finishing after the 'Amsterdam' one." width="720"></a>
+</p>
 
 ## Core design decision
 
@@ -33,6 +33,12 @@ for e in events:
 ```
 
 Every generator takes a `seed`. Same seed + same profile + same input produces a byte-identical event stream — this is what makes it usable in tests.
+
+<p align="center">
+  <img src="docs/lead.svg" alt="hunt_and_peck profile typing 'realy fast typing looks fake', with a mid-word typo (typk / typkn) caught and corrected back to 'typing'" width="420">
+</p>
+
+<p align="center"><em>The <code>hunt_and_peck</code> profile typing a sentence — a real generated event stream, rendered by the SVG backend. No hand-authored timing, no keyframe editing.</em></p>
 
 ## Install
 

@@ -28,6 +28,7 @@ theme:
 
 nav:
   - Home: index.md
+  - Demo: demo/index.html
   - Quickstart: quickstart.md
   - Testing with Playwright: testing.md
   - The model: model.md

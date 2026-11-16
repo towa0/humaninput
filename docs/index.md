@@ -30,6 +30,7 @@ Every generator takes a `seed`. Same seed + same profile + same input produces a
 
 ## Where to go next
 
+- **[Demo](demo/index.html)** — an automated test and a humaninput seed typing into the same buggy autocomplete.
 - **[Quickstart](quickstart.md)** — install, first typing/mouse/touch example, CLI basics.
 - **[Testing with Playwright](testing.md)** — `type_into`, seed sweeps, replaying a failing seed.
 - **[The model](model.md)** — the statistics behind typing, error injection, mouse movement, and touch.

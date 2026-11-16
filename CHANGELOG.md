@@ -28,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `examples/autocomplete-race/`: a debounced city search with a planted
   stale-response bug, a `?fixed=1` variant, and tests comparing `fill()`,
   fixed delays and a 20-seed `type_into` sweep.
+- Docs demo (`docs/demo/`, published at `/demo/`): `fill()` and a
+  humaninput seed typing into the same buggy autocomplete, with a key
+  view and a request timeline. Streams come from
+  `scripts/gen_demo_streams.py`.
 - `tests/test_browser_real.py` (`browser` marker): Backspace, arrows and
   Enter in real Chromium. Skipped when Playwright or Chromium is missing.
 - Arrow-key correction: a nearby typo can be fixed by navigating back to it
