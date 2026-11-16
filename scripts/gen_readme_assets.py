@@ -17,6 +17,7 @@ from humaninput.backends import matplotlib as mpl_backend
 from humaninput.backends import svg as svg_backend
 from humaninput.events import KeyAction
 from humaninput.mouse.pointer import Pointer
+from humaninput.replay import replay_buffer
 from humaninput.typing.typist import Typist
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -24,18 +25,18 @@ DOCS = ROOT / "docs"
 DOCS.mkdir(exist_ok=True)
 
 prof = profiles.load("hunt_and_peck")
-sentence = "realy fast typing looks fake"
+sentence = "Amsterdam"
 
 chosen = None
 for seed in range(200):
     stream = Typist(profile=prof, seed=seed).type(sentence, errors=True)
     n_errors = sum(1 for e in stream.events if e.is_error and e.action == KeyAction.DOWN)
-    n_corrections = sum(1 for e in stream.events if e.is_correction and e.key == "backspace")
-    if 1 <= n_errors <= 2 and 1 <= n_corrections <= 4 and stream.duration_ms < 18000:
+    n_corrections = sum(1 for e in stream.events if e.is_correction and e.key == "backspace" and e.action == KeyAction.DOWN)
+    if n_errors == 1 and 1 <= n_corrections <= 3 and replay_buffer(stream)[-1].text == sentence:
         chosen = (seed, stream)
         break
 
-assert chosen, "couldn't find a seed with a clean single visible error+correction"
+assert chosen, "couldn't find a seed with one typo and its correction"
 seed, stream = chosen
 print(f"lead SVG: seed={seed} duration={stream.duration_ms:.0f}ms")
 svg = svg_backend.render(stream, font_size=22, background="#0f172a", text_color="#e2e8f0", cursor_color="#4ade80")

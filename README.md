@@ -4,17 +4,45 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
 
-**[Full documentation →](https://towa0.github.io/humaninput/)** — the model in depth, complete profile TOML schema, every backend, CLI reference.
-
-A statistical model of human input timing — keystrokes and mouse movement — emitted as a timed event stream.
-
-**Use it for:** recording screencasts and demos where instant text insertion looks wrong, generating typing animations for docs and landing pages, and QA-testing UIs that behave differently under realistic input timing than under instantaneous programmatic input (debounce handling, autocomplete races, per-keystroke validation).
+Find frontend timing bugs by typing like people do, then replay the exact failure.
 
 **[Try the demo →](https://towa0.github.io/humaninput/demo/)** The same buggy autocomplete, typed into by `fill()` and by a humaninput seed.
 
 <p align="center">
   <a href="https://towa0.github.io/humaninput/demo/"><img src="docs/demo.gif" alt="Recording of the demo. Left, an automated test fills 'Amsterdam' and passes. Right, humaninput seed 7 types 'Amsterdam' with a typo and a correction; the page ends up showing results for 'Amsterd', and the timeline shows the slow 'Amsterd' request finishing after the 'Amsterdam' one. Then the fix is switched on, the same seed is replayed, and it passes." width="720"></a>
 </p>
+
+```python
+import pytest
+from humaninput.playwright import type_into
+from humaninput.testing import describe, seeds
+
+@pytest.mark.parametrize("seed", seeds(20))
+def test_results_match_what_was_typed(page, seed):
+    page.goto("http://localhost:8000/app.html")
+    box = page.get_by_role("searchbox")
+    stream = type_into(box, "Amsterdam", profile="hunt_and_peck", seed=seed)
+    page.wait_for_timeout(1500)
+    assert page.get_by_test_id("results-query").text_content() == box.input_value(), describe(stream)
+```
+
+With the [example app](examples/autocomplete-race/) served on port 8000 (`python -m http.server -d examples/autocomplete-race`), seed 7 fails:
+
+```
+FAILED test_search.py::test_results_match_what_was_typed[chromium-seed=7]
+E   AssertionError: seed=7 hunt_and_peck: 4.28 s, 15 keystrokes, 1 correction, longest pause 575 ms
+E   assert 'Amsterd' == 'Amsterdam'
+```
+
+Run that test id again and the same keystrokes replay with the same timing, so the same stale result comes back. (`[chromium-...]` is added by pytest-playwright.)
+
+### Why not just `fill()` or a fixed delay?
+
+`fill()` sets the whole value at once. The app sees one input event and sends one request, so two requests can never race. A fixed delay types every key at the same pace. It can catch a timing bug if you pick the right value: in the example app, a 400 ms delay catches it and 100 ms doesn't. Seeds give many different timings, with pauses and quick bursts in different places, so you don't have to guess the value. When one fails, the seed replays it exactly. With `virtual_time=True`, the page clock follows the stream to the millisecond, and the example's 40 seed runs take about 17 s instead of almost 5 minutes.
+
+**Use it for:** Playwright tests of UI that reacts while someone types: debounced search, autocomplete, per-keystroke validation, input masks. The same event streams can also be rendered as SVG, CSS or terminal typing animations for docs and screencasts.
+
+**[Full documentation →](https://towa0.github.io/humaninput/)** Testing with Playwright, the timing model in depth, the profile TOML schema, every backend, CLI reference.
 
 ## Core design decision
 
@@ -35,15 +63,16 @@ for e in events:
 Every generator takes a `seed`. Same seed + same profile + same input produces a byte-identical event stream — this is what makes it usable in tests.
 
 <p align="center">
-  <img src="docs/lead.svg" alt="hunt_and_peck profile typing 'realy fast typing looks fake', with a mid-word typo (typk / typkn) caught and corrected back to 'typing'" width="420">
+  <img src="docs/lead.svg" alt="hunt_and_peck profile, seed 0, typing 'Amsterdam': it types 'Amsy', notices the typo a few letters later, moves back with the arrow keys, replaces the y with a t, moves forward again and finishes the word" width="420">
 </p>
 
-<p align="center"><em>The <code>hunt_and_peck</code> profile typing a sentence — a real generated event stream, rendered by the SVG backend. No hand-authored timing, no keyframe editing.</em></p>
+<p align="center"><em>The <code>hunt_and_peck</code> profile, seed 0, typing "Amsterdam". It hits y instead of t, notices three letters later and fixes it with the arrow keys. A generated event stream, rendered by the SVG backend.</em></p>
 
 ## Install
 
 ```bash
 pip install humaninput            # core: numpy only
+pip install humaninput[playwright]  # + type_into and seed sweeps for Playwright tests
 pip install humaninput[pynput]    # + real keyboard/mouse control
 pip install humaninput[matplotlib]  # + validation plots
 ```

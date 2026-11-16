@@ -11,7 +11,8 @@ def test_search(page, seed):
     assert ..., describe(stream)
 ```
 
-A failing test's id names its seed (`test_search[seed=13]`). Run that id
+A failing test's id names its seed (`test_search[seed=13]`, or
+`test_search[chromium-seed=13]` with pytest-playwright). Run that id
 again and the same keystrokes replay with the same timing.
 
 pytest is imported lazily, so `import humaninput` never needs it.

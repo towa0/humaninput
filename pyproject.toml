@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "humaninput contributors" }]
-keywords = ["typing", "simulation", "mouse", "keystroke-dynamics", "demo-recording", "automation"]
+keywords = ["typing", "simulation", "mouse", "keystroke-dynamics", "demo-recording", "ui-testing", "playwright", "flaky-tests"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",

@@ -59,7 +59,7 @@ def test_search(page, seed):
     assert results_match(page, box.input_value()), describe(stream)
 ```
 
-`seeds(n, start=0)` returns `pytest.param`s with ids like `seed=13`, so a failure reads `test_search[seed=13]`. Run that id again to replay the exact keystrokes and timing.
+`seeds(n, start=0)` returns `pytest.param`s with ids like `seed=13`, so a failure reads `test_search[seed=13]`. With pytest-playwright's `page` fixture it reads `test_search[chromium-seed=13]`. Run that id again to replay the exact keystrokes and timing.
 
 `describe(stream)` is one line for an assertion message:
 

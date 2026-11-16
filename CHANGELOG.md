@@ -14,6 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   subcommands, their tests, and the Tools docs page. Out of scope for a
   UI-testing library.
 
+### Changed
+
+- README and docs home now lead with UI testing: find frontend timing bugs
+  by typing like people do, then replay the exact failure.
+- The lead SVG types "Amsterdam" (hunt_and_peck, seed 0, one typo fixed with
+  the arrow keys).
+- Package keywords: dropped `automation`; added `ui-testing`, `playwright`
+  and `flaky-tests`.
+
 ### Added
 
 - `humaninput.playwright.type_into(locator, text, *, profile, seed, errors, layout)`:

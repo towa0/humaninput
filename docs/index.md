@@ -1,14 +1,16 @@
 # humaninput
 
-A statistical model of human input timing — keystrokes, mouse movement, and touch — emitted as a timed event stream.
+Find frontend timing bugs by typing like people do, then replay the exact failure.
 
-**Use it for:** recording screencasts and demos where instant text insertion looks wrong, generating typing animations for docs and landing pages, and QA-testing UIs that behave differently under realistic input timing than under instantaneous programmatic input (debounce handling, autocomplete races, per-keystroke validation).
+humaninput generates keystroke timing from a statistical model, with pauses, bursts, typos and corrections. A Playwright test types into a page with one of those streams. Sweep a test across many seeds, and when one fails, the seed replays the same keystrokes with the same timing. See the [demo](demo/index.html) and [Testing with Playwright](testing.md).
+
+**Use it for:** Playwright tests of UI that reacts while someone types: debounced search, autocomplete, per-keystroke validation, input masks. The same event streams can also be rendered as SVG, CSS or terminal typing animations for docs and screencasts.
 
 <p align="center">
-  <img src="lead.svg" alt="hunt_and_peck profile typing 'realy fast typing looks fake', with a mid-word typo (typk / typkn) caught and corrected back to 'typing'" width="420">
+  <img src="lead.svg" alt="hunt_and_peck profile, seed 0, typing 'Amsterdam': it types 'Amsy', notices the typo a few letters later, moves back with the arrow keys, replaces the y with a t, moves forward again and finishes the word" width="420">
 </p>
 
-<p align="center"><em>The <code>hunt_and_peck</code> profile typing a sentence — a real generated event stream, rendered by the SVG backend. No hand-authored timing, no keyframe editing.</em></p>
+<p align="center"><em>The <code>hunt_and_peck</code> profile, seed 0, typing "Amsterdam". It hits y instead of t, notices three letters later and fixes it with the arrow keys. A generated event stream, rendered by the SVG backend.</em></p>
 
 ## Core design decision
 
