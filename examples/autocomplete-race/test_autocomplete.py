@@ -39,6 +39,10 @@ def browser():
 
 def _open(browser, fixed: bool):
     page = browser.new_page()
+    # Virtual time: the page clock only moves when a test advances it, so
+    # timers fire at exactly the typed timings, however busy the machine is.
+    page.clock.install(time=0)
+    page.clock.pause_at(1)
     page.goto(APP + ("?fixed=1" if fixed else ""))
     return page
 
@@ -57,8 +61,19 @@ def fixed(browser):
     page.close()
 
 
+def press_with_delay(page, text: str, delay_ms: int) -> None:
+    # press_sequentially(text, delay=...) waits in real time, which a paused
+    # page clock ignores. This is the same thing in virtual time.
+    box = page.locator("#city")
+    box.click()
+    for i, ch in enumerate(text):
+        if i:
+            page.clock.run_for(delay_ms)
+        box.press(ch)
+
+
 def assert_results_match_input(page, note: str = "") -> None:
-    page.wait_for_timeout(QUIET_MS)
+    page.clock.run_for(QUIET_MS)
     # Compare with what is in the box, not TEXT: an uncorrected typo is allowed.
     typed = page.locator("#city").input_value()
     shown = page.get_by_test_id("results-query").text_content()
@@ -71,24 +86,24 @@ def test_fill(buggy):
 
 
 def test_fixed_delay(buggy):
-    buggy.locator("#city").press_sequentially(TEXT, delay=100)
+    press_with_delay(buggy, TEXT, 100)
     assert_results_match_input(buggy)
 
 
 @pytest.mark.xfail(strict=True, reason="a fixed delay can catch this if you guess the right value")
 def test_fixed_delay_slow(buggy):
-    buggy.locator("#city").press_sequentially(TEXT, delay=400)
+    press_with_delay(buggy, TEXT, 400)
     assert_results_match_input(buggy)
 
 
 @pytest.mark.xfail(strict=False, reason=BUGGY_REASON)
 @pytest.mark.parametrize("seed", seeds(20))
 def test_human(buggy, seed):
-    stream = type_into(buggy.locator("#city"), TEXT, profile="hunt_and_peck", seed=seed)
+    stream = type_into(buggy.locator("#city"), TEXT, profile="hunt_and_peck", seed=seed, virtual_time=True)
     assert_results_match_input(buggy, describe(stream))
 
 
 @pytest.mark.parametrize("seed", seeds(20))
 def test_human_fixed(fixed, seed):
-    stream = type_into(fixed.locator("#city"), TEXT, profile="hunt_and_peck", seed=seed)
+    stream = type_into(fixed.locator("#city"), TEXT, profile="hunt_and_peck", seed=seed, virtual_time=True)
     assert_results_match_input(fixed, describe(stream))

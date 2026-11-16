@@ -139,3 +139,40 @@ def test_play_keys_sends_key_codes_for_editing_keys(monkeypatch):
     ]
     assert session.calls[3][1]["text"] == "\r"
     assert "text" not in session.calls[0][1]
+
+
+class _FakeClock:
+    def __init__(self, log: list) -> None:
+        self.log = log
+
+    def run_for(self, ms: int) -> None:
+        self.log.append(("run_for", ms))
+
+
+def test_play_keys_with_clock_advances_clock_instead_of_sleeping(monkeypatch):
+    def fail_sleep(s):
+        raise AssertionError("slept in virtual-time mode")
+
+    monkeypatch.setattr(browser.time, "sleep", fail_sleep)
+    log: list = []
+    session = _FakeCDPSession()
+    session.send = lambda method, params: log.append((params["type"], params["key"]))
+    stream = EventStream(
+        events=[
+            KeyEvent(0.0, KeyAction.DOWN, "a"),
+            KeyEvent(40.4, KeyAction.UP, "a"),
+            KeyEvent(140.6, KeyAction.DOWN, "b"),
+            KeyEvent(140.9, KeyAction.UP, "b"),
+        ]
+    )
+
+    browser.play_keys(stream, _FakePage(session), clock=_FakeClock(log))
+
+    assert log == [
+        ("keyDown", "a"),
+        ("run_for", 40),
+        ("keyUp", "a"),
+        ("run_for", 101),
+        ("keyDown", "b"),
+        ("keyUp", "b"),
+    ]

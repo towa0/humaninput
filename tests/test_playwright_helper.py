@@ -27,9 +27,18 @@ class _FakeContext:
         return _FakeSession(self.log)
 
 
+class _FakeClock:
+    def __init__(self, log: list) -> None:
+        self.log = log
+
+    def run_for(self, ms: int) -> None:
+        self.log.append(("run_for", ms))
+
+
 class _FakePage:
     def __init__(self, log: list) -> None:
         self.context = _FakeContext(log)
+        self.clock = _FakeClock(log)
 
 
 class _FakeLocator:
@@ -94,6 +103,27 @@ def test_same_seed_same_stream(monkeypatch):
     a = type_into(_FakeLocator(), "Amsterdam", profile="hunt_and_peck", seed=13)
     b = type_into(_FakeLocator(), "Amsterdam", profile="hunt_and_peck", seed=13)
     assert a.events == b.events
+
+
+def test_virtual_time_advances_page_clock_by_stream_gaps(monkeypatch):
+    def fail_sleep(s):
+        raise AssertionError("slept in virtual-time mode")
+
+    monkeypatch.setattr(browser.time, "sleep", fail_sleep)
+    loc = _FakeLocator()
+
+    stream = type_into(loc, "hello", profile="touch_typist", seed=3, virtual_time=True)
+
+    advanced = sum(ms for kind, ms in loc.log if kind == "run_for")
+    assert advanced == round(stream.duration_ms)
+    assert sum(1 for kind, _ in loc.log if kind == "Input.dispatchKeyEvent") == len(stream)
+
+
+def test_real_time_is_default(monkeypatch):
+    _no_sleep(monkeypatch)
+    loc = _FakeLocator()
+    type_into(loc, "hi", seed=1)
+    assert not any(kind == "run_for" for kind, _ in loc.log)
 
 
 def test_import_humaninput_does_not_import_playwright_or_pytest():

@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING
 from humaninput.events import EventStream, KeyAction
 
 if TYPE_CHECKING:
-    from playwright.sync_api import CDPSession, Page
+    from playwright.sync_api import CDPSession, Clock, Page
 
 # Chrome only runs editing commands (delete, caret moves) for key events that carry a virtual key code.
 _SPECIAL_KEYS: dict[str, tuple[str, str | None, str, int]] = {
@@ -40,17 +40,29 @@ def _cdp(page: Page) -> CDPSession:
     return page.context.new_cdp_session(page)
 
 
-def play_keys(stream: EventStream, page: Page) -> None:
+def play_keys(stream: EventStream, page: Page, clock: Clock | None = None) -> None:
     """Dispatch a `KeyEvent` stream into `page` via
     `Input.dispatchKeyEvent`, sleeping between events to match each
-    event's `t_ms`."""
+    event's `t_ms`.
+
+    With `clock` (a Playwright `Clock`, e.g. `page.clock`, installed and
+    paused), nothing sleeps: the page's clock is advanced by each gap with
+    `clock.run_for`, so page timers see the stream's timing exactly."""
     session = _cdp(page)
     t0 = time.perf_counter()
+    advanced_ms = 0
     for e in stream:
-        target_s = e.t_ms / 1000.0
-        elapsed = time.perf_counter() - t0
-        if target_s > elapsed:
-            time.sleep(target_s - elapsed)
+        if clock is not None:
+            # run_for only takes whole milliseconds.
+            target_ms = round(e.t_ms)
+            if target_ms > advanced_ms:
+                clock.run_for(target_ms - advanced_ms)
+                advanced_ms = target_ms
+        else:
+            target_s = e.t_ms / 1000.0
+            elapsed = time.perf_counter() - t0
+            if target_s > elapsed:
+                time.sleep(target_s - elapsed)
 
         special = _SPECIAL_KEYS.get(e.key)
         if special is not None:

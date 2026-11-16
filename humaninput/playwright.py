@@ -34,6 +34,7 @@ def type_into(
     seed: int | None = None,
     errors: bool = True,
     layout: Layout | str | None = None,
+    virtual_time: bool = False,
 ) -> EventStream:
     """Click `locator`, then type `text` into it with the timing of a
     generated `EventStream`. Returns the stream so a test can log it.
@@ -46,10 +47,22 @@ def type_into(
 
     `profile` is a shipped profile name, a path to a profile TOML, or a
     `Profile`. `seed=None` gives a different stream on every call.
+
+    `virtual_time=True` advances `locator.page.clock` by each gap between
+    events instead of sleeping. Install and pause the clock before loading
+    the page, so nothing but the stream moves time:
+
+        page.clock.install(time=0)
+        page.clock.pause_at(1)
+        page.goto(url)
+
+    Timers in the page then fire at exactly the stream's times, and a
+    10-second stream takes well under a second to play.
     """
     if isinstance(profile, str):
         profile = profiles_mod.load(profile)
     stream = Typist(profile=profile, seed=seed, layout=layout).type(text, errors=errors)
     locator.click()
-    browser.play_keys(stream, locator.page)
+    page = locator.page
+    browser.play_keys(stream, page, clock=page.clock if virtual_time else None)
     return stream

@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `humaninput.testing`: `seeds(n, start=0)` for `pytest.mark.parametrize`
   (ids like `seed=13`) and `describe(stream)` for assertion messages.
 - `[playwright]` extra now includes pytest.
+- Virtual-time playback: `type_into(..., virtual_time=True)` and
+  `browser.play_keys(stream, page, clock=page.clock)` advance Playwright's
+  page clock by each gap between events instead of sleeping.
 - `examples/autocomplete-race/`: a debounced city search with a planted
   stale-response bug, a `?fixed=1` variant, and tests comparing `fill()`,
   fixed delays and a 20-seed `type_into` sweep.

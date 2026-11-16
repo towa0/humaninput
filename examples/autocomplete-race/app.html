@@ -26,7 +26,11 @@
 <script src="autocomplete.js"></script>
 <script>
   var fixed = new URLSearchParams(location.search).get("fixed") === "1";
-  window.Autocomplete.create(document.getElementById("search"), { fixed: fixed });
+  window.searchEvents = [];
+  window.Autocomplete.create(document.getElementById("search"), {
+    fixed: fixed,
+    onEvent: function (e) { window.searchEvents.push(e); },
+  });
 </script>
 </body>
 </html>
