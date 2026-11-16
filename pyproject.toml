@@ -50,6 +50,7 @@ packages = ["humaninput"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-p no:pytest_playwright"
+markers = ["browser: needs Playwright and Chromium; skipped when they are missing"]
 
 [tool.ruff]
 target-version = "py310"

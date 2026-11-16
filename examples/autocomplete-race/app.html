@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>City search</title>
+<style>
+  body { font: 16px/1.4 system-ui, sans-serif; margin: 2rem; color: #111; background: #fff; }
+  label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+  input { font: inherit; padding: 0.4rem 0.5rem; width: 16rem; }
+  .results { margin-top: 1rem; }
+  .results p { margin: 0 0 0.25rem; }
+  .results ul { margin: 0; padding-left: 1.25rem; }
+  .empty { list-style: none; color: #555; }
+</style>
+</head>
+<body>
+<div class="search" id="search">
+  <label for="city">City</label>
+  <input id="city" type="search" autocomplete="off" spellcheck="false" data-role="input">
+  <div class="results" aria-live="polite">
+    <p>Results for: <span data-role="query" data-testid="results-query"></span></p>
+    <ul data-role="list"></ul>
+  </div>
+</div>
+<script src="autocomplete.js"></script>
+<script>
+  var fixed = new URLSearchParams(location.search).get("fixed") === "1";
+  window.Autocomplete.create(document.getElementById("search"), { fixed: fixed });
+</script>
+</body>
+</html>
