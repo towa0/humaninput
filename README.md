@@ -70,11 +70,13 @@ Every generator takes a `seed`. Same seed + same profile + same input produces a
 
 ## Install
 
+The package is published as humaninput-testing; you still `import humaninput`.
+
 ```bash
-pip install humaninput            # core: numpy only
-pip install humaninput[playwright]  # + type_into and seed sweeps for Playwright tests
-pip install humaninput[pynput]    # + real keyboard/mouse control
-pip install humaninput[matplotlib]  # + validation plots
+pip install humaninput-testing              # core: numpy only
+pip install humaninput-testing[playwright]  # + type_into and seed sweeps for Playwright tests
+pip install humaninput-testing[pynput]      # + real keyboard/mouse control
+pip install humaninput-testing[matplotlib]  # + validation plots
 ```
 
 ## Validation

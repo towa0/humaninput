@@ -2,11 +2,13 @@
 
 ## Install
 
+The package is published as humaninput-testing; you still `import humaninput`.
+
 ```bash
-pip install humaninput              # core: numpy only
-pip install humaninput[pynput]      # + real OS keyboard/mouse control
-pip install humaninput[playwright]  # + browser/touch backends (BYO Page)
-pip install humaninput[matplotlib]  # + validation plots
+pip install humaninput-testing              # core: numpy only
+pip install humaninput-testing[pynput]      # + real OS keyboard/mouse control
+pip install humaninput-testing[playwright]  # + browser/touch backends (BYO Page)
+pip install humaninput-testing[matplotlib]  # + validation plots
 ```
 
 `import humaninput` never requires `pynput`, `playwright`, or `matplotlib` — each is a lazily-imported optional dependency, only touched by the backend that needs it.

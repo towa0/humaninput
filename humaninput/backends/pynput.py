@@ -1,5 +1,5 @@
 """Drive the real OS keyboard and mouse via `pynput`. Optional dependency
-(`pip install humaninput[pynput]`), imported lazily so the core package
+(`pip install humaninput-testing[pynput]`), imported lazily so the core package
 never requires it.
 
 This backend takes control of real input devices. It prints a warning on
@@ -63,7 +63,7 @@ def play_keys(stream: EventStream) -> None:
     try:
         from pynput.keyboard import Controller, Key
     except ImportError as exc:
-        raise RuntimeError("pynput backend requires `pip install humaninput[pynput]`") from exc
+        raise RuntimeError("pynput backend requires `pip install humaninput-testing[pynput]`") from exc
 
     _warn_once()
     controller = Controller()
@@ -93,7 +93,7 @@ def play_mouse(stream: EventStream) -> None:
     try:
         from pynput.mouse import Button, Controller
     except ImportError as exc:
-        raise RuntimeError("pynput backend requires `pip install humaninput[pynput]`") from exc
+        raise RuntimeError("pynput backend requires `pip install humaninput-testing[pynput]`") from exc
 
     _warn_once()
     controller = Controller()

@@ -7,7 +7,7 @@ holds a live `Page` (from their own Playwright session), and this module
 only calls duck-typed methods on it (`page.context.new_cdp_session(page)`,
 then `.send(method, params)`) — so `import humaninput` never requires
 Playwright, matching the other backends' optional-dependency pattern.
-`pip install humaninput[playwright]` documents the dependency for anyone
+`pip install humaninput-testing[playwright]` documents the dependency for anyone
 who wants type-checked `Page`/`CDPSession` objects, but nothing here
 enforces it.
 """

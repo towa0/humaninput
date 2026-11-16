@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "humaninput"
+name = "humaninput-testing"
 version = "0.2.0"
 description = "Find frontend timing bugs by typing like people do, then replay the exact failure."
 readme = "README.md"

@@ -1,6 +1,6 @@
 # Testing with Playwright
 
-`pip install humaninput[playwright]` adds Playwright and pytest. Neither is imported by `import humaninput`.
+`pip install humaninput-testing[playwright]` adds Playwright and pytest. Neither is imported by `import humaninput`.
 
 ## `type_into`
 

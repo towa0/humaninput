@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Published on PyPI as `humaninput-testing`, because PyPI rejected
+  `humaninput` as too close to the existing `human-input`. Install with
+  `pip install humaninput-testing`; the import name is still `humaninput`.
 - README and docs home now lead with UI testing: find frontend timing bugs
   by typing like people do, then replay the exact failure.
 - The lead SVG types "Amsterdam" (hunt_and_peck, seed 0, one typo fixed with
@@ -61,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   arrow-key correction renders correctly (mid-line edits, not just
   append/backspace-at-end).
 
-- Docs site (mkdocs-material, `pip install humaninput[docs]`): quickstart, the
+- Docs site (mkdocs-material, `pip install humaninput-testing[docs]`): quickstart, the
   timing model in depth, full profile TOML schema (every field, default, and
   validation status), layouts, every backend, and a CLI reference.
   Deployed to GitHub Pages via Actions on push to `main` (paths-filtered to
